@@ -19,7 +19,7 @@ This takes effect after a `make clean && make import`
 
 If you disable the music system and don't replace its functions with something, you should add `AUDIO_NONE` to the list.
 
-Additionally, if you want to use the legacy MIDI-based music workflow you can replace `SDK_TRACKER_FM_BACKEND` with `ENABLE_MODULE_LEGACY_MIDI_FM_BACKEND`
+Additionally, if you want to use the legacy MIDI-based music workflow you can replace `SDK_TRACKER_FM_BACKEND` with `LEGACY_MIDI_FM_BACKEND`
 
 ## Build requirements:
 
