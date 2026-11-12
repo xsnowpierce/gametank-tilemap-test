@@ -22,6 +22,7 @@ int main () {
         if(player1_buttons & INPUT_MASK_LEFT) {
             camera_x += 1;
         }
+        
         else if(player1_buttons & INPUT_MASK_RIGHT){
             camera_x -= 1;
         }
