@@ -31,7 +31,7 @@ void draw_tile_into_gram(unsigned char tile_x, unsigned char tile_y, SpriteSlot 
     direct_prepare_sprite_ram_array_mode(source_sprite_slot);
     for (i = 0; i < TILE_SIZE; ++i) {
         for (j = 0; j < TILE_SIZE; ++j) {
-            tile_pixels[i * TILE_SIZE + j] = vram[((source_y + i) * GRAM_BANK_WIDTH) + source_x + j];
+            tile_pixels[(i * TILE_SIZE) + j] = vram[((source_y + i) << 7) + (source_x + j)];
         }
     }
 
@@ -39,7 +39,7 @@ void draw_tile_into_gram(unsigned char tile_x, unsigned char tile_y, SpriteSlot 
     direct_prepare_sprite_ram_array_mode(target_bank);
     for (i = 0; i < TILE_SIZE; ++i) {
         for (j = 0; j < TILE_SIZE; ++j) {
-            vram[((target_y + i) * GRAM_BANK_WIDTH) + target_x + j] = tile_pixels[i * TILE_SIZE + j];
+            vram[((target_y + i) << 7) + (target_x + j)] = tile_pixels[(i * TILE_SIZE) + j];
         }
     }
 }
