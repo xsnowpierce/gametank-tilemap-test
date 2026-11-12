@@ -55,7 +55,7 @@ void load_drawing(){
         }
     }
     
-
+    free_sprite(tilesetSlot);
     //clear_spritebank(tilemapSpriteRamBank);
 }
 
