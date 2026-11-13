@@ -1,13 +1,24 @@
 #include "cursor.h"
 #include "camera.h"
+#include "gt/gametank.h"
 #include "gt/gfx/sprites.h"
 #include "gt/input.h"
 #include "gen/assets/player.h"
 #include "gt/gfx/draw_queue.h"
+#include "vector.h"
+
+
+void on_cursor_move();
 
 #define TILE_SIZE 8
+#define CURSOR_MAXIMUM_TILE_X 30
+#define CURSOR_MAXIMUM_TILE_Y 29
 
-signed int cursor_position_x = TILE_SIZE * 2, cursor_position_y = TILE_SIZE * 2;
+#define CURSOR_MINIMUM_TILE_X 1
+#define CURSOR_MINIMUM_TILE_Y 2
+
+
+unsigned char cursor_tile_position_x = CURSOR_MINIMUM_TILE_X, cursor_tile_position_y = CURSOR_MINIMUM_TILE_Y;
 SpriteSlot cursorSpritePage;
 
 const unsigned char INPUT_FRAMES_DELAY = 7;
@@ -22,9 +33,26 @@ void initialize_cursor(){
     cursorSpritePage = allocate_sprite(&ASSET__player__player_bmp_load_list);
 }
 
-void update_cursor(){
-    char input_x = 0, input_y = 0;
+static signed char move_axis(signed char position, signed char input, unsigned char minimum, unsigned char maximum){
+    if (input > 0) {
+        if ((unsigned char)input > maximum - position)
+            return maximum;
+    } else if (input < 0) {
+        if ((unsigned char)(-input) > position - minimum)
+            return minimum;
+    }
 
+    position += input;
+    return position;
+}
+
+
+void update_cursor(){
+    signed char input_x = 0, input_y = 0;
+    signed char cursor_old_x = cursor_tile_position_x;
+    signed char cursor_old_y = cursor_tile_position_y;
+
+    PROFILER_START(1);
     if(current_input_frame_delay > 0){
         --current_input_frame_delay;
         return;
@@ -43,9 +71,14 @@ void update_cursor(){
         ++input_y;
     }
 
-    cursor_position_x += (input_x * TILE_SIZE); 
-    cursor_position_y += (input_y * TILE_SIZE);
+    
 
+    cursor_tile_position_x = move_axis(cursor_tile_position_x, input_x, CURSOR_MINIMUM_TILE_X, CURSOR_MAXIMUM_TILE_X);
+    cursor_tile_position_y = move_axis(cursor_tile_position_y, input_y, CURSOR_MINIMUM_TILE_Y, CURSOR_MAXIMUM_TILE_Y);
+
+    if (cursor_tile_position_x != cursor_old_x || cursor_tile_position_y != cursor_old_y){
+        on_cursor_move();
+    }
 
     current_input_frame_delay = INPUT_FRAMES_DELAY;
 
@@ -61,22 +94,34 @@ void update_cursor(){
 
         current_sprite_frame_tick = 0;
     }
+    PROFILER_END(1);
 }
+
+
+void on_cursor_move(){
+    int current_x = cursor_tile_position_x - (camera_x / TILE_SIZE);
+    int current_y = cursor_tile_position_y - (camera_y / TILE_SIZE);
+
+    if (current_x <= 1){
+        move_camera(-TILE_SIZE, 0);
+    }else if (current_x >= 15){
+        move_camera(TILE_SIZE, 0);
+    }
+    if (current_y <= 2){
+        move_camera(0, -TILE_SIZE);
+    }else if (current_y >= 14){
+        move_camera(0, TILE_SIZE);
+    }
+}
+
+
 
 void draw_cursor(){
+
     if(spriteUse == 0){
-        queue_draw_sprite(cursor_position_x - camera_x, cursor_position_y - camera_y, 8, 8, 8, 0, cursorSpritePage);
+        queue_draw_sprite((cursor_tile_position_x * TILE_SIZE) - camera_x, (cursor_tile_position_y * TILE_SIZE) - camera_y, 8, 8, 8, 0, cursorSpritePage);
     }
     else{
-        queue_draw_sprite(cursor_position_x - camera_x, cursor_position_y - camera_y, 8, 8, 16, 0, cursorSpritePage);
+        queue_draw_sprite((cursor_tile_position_x  * TILE_SIZE) - camera_x, (cursor_tile_position_y * TILE_SIZE) - camera_y, 8, 8, 16, 0, cursorSpritePage);
     }
-}
-
-vector_u8b get_cursor_point(){
-    vector_u8b return_point = {0, 0};
-
-    return_point.x = cursor_position_x << 7;
-    return_point.y = cursor_position_y << 7;
-
-    return return_point;
 }

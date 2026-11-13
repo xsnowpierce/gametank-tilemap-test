@@ -4,11 +4,11 @@
 #include "vector.h"
 
 
+extern unsigned char cursor_tile_position_x, cursor_tile_position_y;
+
 void initialize_cursor();
 void update_cursor();
 void draw_cursor();
 
-
-vector_u8b get_cursor_point();
 
 #endif

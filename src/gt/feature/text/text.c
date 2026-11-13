@@ -111,7 +111,7 @@ void text_sprint_num(char* s, unsigned char num) {
 void text_sprint_int(char* s, int num) {
     unsigned int magnitude;
 
-    if (num < -99999 || num > 99999) {
+    if (num < -999 || num > 999) {
         s[0] = '\0';
         return;
     }
@@ -124,13 +124,10 @@ void text_sprint_int(char* s, int num) {
         magnitude = (unsigned int)num;
     }
 
-    s[1] = (magnitude / 1000) + '0';
-    s[2] = (magnitude / 100) + '0';
-    s[3] = ((magnitude / 10) % 10) + '0';
-    s[4] = (magnitude % 10) + '0';
-    s[5] = '\0';
+    s[1] = (magnitude / 100) + '0';
+    s[2] = ((magnitude / 10) % 10) + '0';
+    s[3] = (magnitude % 10) + '0';
+    s[4] = '\0';
 }
-
-
 
 #endif

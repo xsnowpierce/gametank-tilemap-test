@@ -2,7 +2,6 @@
 #include "gt/gfx/draw_queue.h"
 #include "gt/gfx/gfx_sys.h"
 #include "gt/input.h"
-#include "camera.h"
 #include "drawing.h"
 #include "map.h"
 #include "cursor.h"
@@ -28,6 +27,8 @@ void draw(){
     draw_level_map();
     draw_cursor();
     draw_ui();
+    ui_draw_hovered_tile(&level_01);
+    //draw_camera_and_cursor_position();
 }
 
 

@@ -104,7 +104,7 @@ void draw_tile_into_gram(unsigned char tile_x, unsigned char tile_y, SpriteSlot 
 
 void draw_level_map(){
     direct_prepare_sprite_mode(QUADRANT_0 | 7);
-    DIRECT_DRAW_SPRITE(0, 0, 127, 127, 128 - camera_x, 128 - camera_y);
+    DIRECT_DRAW_SPRITE(0, 0, 127, 127, 128 + camera_x, 128 + camera_y);
     DIRECT_DRAW_START();
     await_drawing();
 }
