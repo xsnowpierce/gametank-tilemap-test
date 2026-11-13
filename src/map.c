@@ -1,36 +1,5 @@
 #include "map.h"
 #include "gen/assets/tileset.h"
-#include <unistd.h>
-
-MapLevel get_map_level_01();
-static const unsigned char map_01_data[];
-
-static int map_is_legal(MapLevel level){
-    
-    if(level.tilesetPage == NULL || level.MAP_HEIGHT <= 16 || level.MAP_WIDTH <= 16 || level.TILE_DATA == NULL ){
-        return -1;
-    }
-
-    return 0;
-}
-
-MapLevel get_map_level(char map_id){
-    MapLevel dummyLevelData = {NULL, -1, -1, NULL};
-
-    switch(map_id){
-        case 0:
-            return get_map_level_01();
-            break;
-        
-        default:
-            return dummyLevelData;
-    }
-}
-
-MapLevel get_map_level_01(){
-    MapLevel levelData = {&ASSET__tileset__tileset_bmp_load_list, 32, 32, map_01_data};
-    return levelData;
-}
 
 static const unsigned char map_01_data[] = {
 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
@@ -120,3 +89,8 @@ static const unsigned char map_01_data[] = {
 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
 6, 6, 6, 6
 };
+
+MapLevel level_01 = {
+    &ASSET__tileset__tileset_bmp_load_list, 32, 32, map_01_data
+};
+

@@ -3,12 +3,13 @@
 #include "gt/input.h"
 #include "camera.h"
 #include "drawing.h"
+#include "map.h"
 
 int main () {
-
     init_graphics();
 
-    load_map_into_gram(get_map_level(0));
+
+    load_map_into_gram(&level_01);
     //load_drawing();
 
     while (1) {

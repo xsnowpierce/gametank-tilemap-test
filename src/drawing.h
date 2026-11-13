@@ -3,7 +3,7 @@
 
 #include "map.h"
 
-int load_map_into_gram(MapLevel maplevel);
+int load_map_into_gram(MapLevel *maplevel);
 //void load_drawing();
 void draw();
 
