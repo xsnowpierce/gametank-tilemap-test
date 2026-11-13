@@ -8,10 +8,8 @@ int main () {
 
     init_graphics();
 
-    await_drawing();
-    await_draw_queue();
-
-    load_drawing();
+    load_map_into_gram(get_map_level(0));
+    //load_drawing();
 
     while (1) {
         queue_clear_screen(3);

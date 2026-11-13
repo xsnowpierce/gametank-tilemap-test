@@ -6,7 +6,10 @@
 #include "gt/gfx/gfx_sys.h"
 #include "gt/gfx/sprites.h"
 #include "gt/gfx/draw_queue.h"
+#include "map.h"
+#include <unistd.h>
 
+int load_map_into_gram(MapLevel maplevel);
 void load_drawing();
 void draw_tile_into_gram(unsigned char tile_x, unsigned char tile_y, SpriteSlot source_sprite_slot, unsigned char tile_id, unsigned char target_bank);
 void draw();
@@ -16,32 +19,50 @@ void draw();
 #define TILES_PER_ROW (GRAM_BANK_WIDTH / TILE_SIZE)
 
 
-SpriteSlot tilesetSlot;
+int load_map_into_gram(MapLevel maplevel){
+    SpriteSlot currentTileset;
 
-unsigned char screen_tile_count;
+    if(!map_is_legal(maplevel)){
+        return -1;
+    }
 
-enum TILE {
-    GRASS = 0, DIRT = 1, BUSH = 2, TREE = 3
-};
-
-void load_drawing(){
-    unsigned char i, j, t = 0;
-    
-    tilesetSlot = allocate_sprite(&ASSET__map__maptileset_bmp_load_list);
+    currentTileset = allocate_sprite(maplevel.tilesetPage);
     
     // disable interrupts before we do the heavy function
     __asm__("SEI");
-    
-    for (i = 0; i < 16; ++i) {
-        for (j = 0; j < 16; ++j) {
-            draw_tile_into_gram(j, i, tilesetSlot, GRASS, QUADRANT_3 | 0);
-        }
-    }
-    
-    free_sprite(tilesetSlot); // we don't need the tilemap in gram anymore since the map is drawn
+
+    // load the map now
+
 
     __asm__("CLI"); // re-enable interrupts since we are now finished
+
+
+    return 0;
 }
+
+
+// void load_drawing(){
+//     unsigned char i, j, t = 0;
+    
+//     tilesetSlot = allocate_sprite(&ASSET__map__maptileset_bmp_load_list);
+    
+
+//     // disable interrupts before we do the heavy function
+//     __asm__("SEI");
+    
+//     // just load a bunch of dummy tiles into the bank
+//     for (i = 0; i < 16; ++i) {
+//         for (j = 0; j < 16; ++j) {
+//             draw_tile_into_gram(j, i, tilesetSlot, TILE_GRASS, QUADRANT_3 | 0);
+//         }
+//     }
+    
+//     clear_spritebank(tilesetSlot); // we don't need the tilemap in gram anymore since the map is drawn
+
+//     __asm__("CLI"); // re-enable interrupts since we are now finished
+// }
+
+
 
 // TODO add a proper doc header to this so I remember hwo to use it
 void draw_tile_into_gram(unsigned char tile_x, unsigned char tile_y, SpriteSlot source_sprite_slot, unsigned char tile_id, unsigned char target_bank) {
