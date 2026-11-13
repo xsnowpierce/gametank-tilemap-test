@@ -5,6 +5,6 @@
 
 int load_map_into_gram(MapLevel *maplevel);
 //void load_drawing();
-void draw();
+void draw_level_map();
 
 #endif

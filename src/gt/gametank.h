@@ -7,7 +7,7 @@
 
 typedef char bool;
 #define true 1
-#define false 0
+#define false 0 
 
 #define audio_reset ((char *) 0x2000)
 #define audio_nmi ((char *) 0x2001)
