@@ -71,3 +71,12 @@ void draw_cursor(){
         queue_draw_sprite(cursor_position_x - camera_x, cursor_position_y - camera_y, 8, 8, 16, 0, cursorSpritePage);
     }
 }
+
+vector_u8b get_cursor_point(){
+    vector_u8b return_point = {0, 0};
+
+    return_point.x = cursor_position_x << 7;
+    return_point.y = cursor_position_y << 7;
+
+    return return_point;
+}

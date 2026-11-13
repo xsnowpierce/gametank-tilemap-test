@@ -5,30 +5,29 @@
 #include "camera.h"
 #include "drawing.h"
 #include "map.h"
-//#include "gt/feature/text/text.h"
 #include "cursor.h"
+#include "ui.h"
 
-SpriteSlot textSlot;
 
 void start(){
     init_graphics();
-    //text_init();
-    //textSlot = text_load_font();
     initialize_cursor();
+    initialize_ui();
 
     load_map_into_gram(&level_01);
-    //load_drawing();
 }
 
 void update(){
     update_inputs();
     update_cursor();
+    update_ui();
 }
 
 
 void draw(){
     draw_level_map();
     draw_cursor();
+    draw_ui();
 }
 
 

@@ -2,6 +2,7 @@
 #define MAP_H
 
 #include "gt/gfx/sprites.h"
+#include "vector.h"
 
 enum TILE {
     TILE_BLACK = 0, TILE_GRASS = 1, TILE_DIRT = 2, TILE_BUSH = 3, TILE_TREE = 4, TILE_WATER = 5
@@ -14,5 +15,10 @@ typedef struct {
 } MapLevel;
 
 extern MapLevel level_01;
+
+static unsigned char get_tile_from_point(MapLevel *level, vector_u8b point){
+    
+    return level->TILE_DATA[point.y * level->MAP_WIDTH + point.x];
+}
 
 #endif
