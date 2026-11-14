@@ -108,26 +108,4 @@ void text_sprint_num(char* s, unsigned char num) {
     pop_rom_bank();
 }
 
-void text_sprint_int(char* s, int num) {
-    unsigned int magnitude;
-
-    if (num < -999 || num > 999) {
-        s[0] = '\0';
-        return;
-    }
-
-    if (num < 0) {
-        s[0] = '-';
-        magnitude = (unsigned int)(-num);
-    } else {
-        s[0] = '+';
-        magnitude = (unsigned int)num;
-    }
-
-    s[1] = (magnitude / 100) + '0';
-    s[2] = ((magnitude / 10) % 10) + '0';
-    s[3] = (magnitude % 10) + '0';
-    s[4] = '\0';
-}
-
 #endif
