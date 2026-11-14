@@ -25,8 +25,6 @@ void move_camera(int d_x, int d_y){
         return;
     }
 
-    camera_is_moving = 1;
-
     if (next_x < 0) next_x = 0;
     if (next_x > 128) next_x = 128;
     if (next_y < 0) next_y = 0;
@@ -37,6 +35,13 @@ void move_camera(int d_x, int d_y){
 
     start_camera_x = (int) camera_x;
     start_camera_y = (int) camera_y;
+
+    if(target_camera_x == start_camera_x && target_camera_y == start_camera_y){
+        return;
+    }
+
+    camera_is_moving = 1;
+
     move_duration = CAMERA_MOVE_TIME;
     move_elapsed = 0;
 }
