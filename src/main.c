@@ -35,11 +35,13 @@ void start(){
 
 void update(){
     update_inputs();
-    
+
     update_camera();
     update_cursor();
-    
+
+    update_unit_animation();
     update_unit_cache();
+
     update_ui();
 }
 
@@ -47,9 +49,9 @@ void update(){
 void draw(){
     draw_level_map();
     draw_cursor();
-    draw_visible_units(0);
+    draw_visible_units();
     draw_ui();
-    ui_draw_hovered_tile(&level_01);
+    //ui_draw_hovered_tile(&level_01);
     //draw_camera_and_cursor_position();
 }
 

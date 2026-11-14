@@ -23,8 +23,9 @@ extern Unit units_array[];
 void set_unit_spritesheet(SpriteSlot *slot);
 void load_units_into_array(Unit units[MAX_UNIT_COUNT]);
 void update_unit_cache();
-void draw_visible_units(char spriteFrame);
+void draw_visible_units();
 void draw_unit(Unit *unit, char spriteFrame);
+void update_unit_animation();
 
 vector_u8b get_unit_sprite_point(char type);
 

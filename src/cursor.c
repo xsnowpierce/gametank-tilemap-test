@@ -13,7 +13,6 @@ void query_cursor_move();
 
 #define TILE_SIZE 8
 
-#define INPUT_FRAMES_DELAY 5
 #define SPRITE_ANIMATION_TICK_FRAMES 30
 
 #define CURSOR_MAXIMUM_TILE_X 30
@@ -21,7 +20,8 @@ void query_cursor_move();
 #define CURSOR_MINIMUM_TILE_X 1
 #define CURSOR_MINIMUM_TILE_Y 2
 
-#define CAMERA_MOVE_TIME 5
+#define INPUT_FRAMES_DELAY 4
+#define CAMERA_MOVE_TIME 7
 
 unsigned char cursor_tile_position_x = CURSOR_MINIMUM_TILE_X, cursor_tile_position_y = CURSOR_MINIMUM_TILE_Y;
 SpriteSlot *cursorSpritePage;

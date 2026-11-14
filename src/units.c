@@ -6,8 +6,15 @@
 #define TILE_SIZE 8
 #define TILES_ON_SCREEN 16
 
+#define SPRITE_ANIMATION_FRAME_TIME 10
+#define SPRITE_ANIMATION_MAX_FRAME 2
+
 SpriteSlot *spriteSheet;
 Unit units_array[MAX_UNIT_COUNT];
+
+char current_sprite_frame_index = 0;
+char current_sprite_animation_counter = 0;
+char sprite_animation_ascending = 0;
 
 void set_unit_spritesheet(SpriteSlot *slot){
     spriteSheet = slot;
@@ -39,11 +46,34 @@ void update_unit_cache(){
     }
 }
 
-void draw_visible_units(char spriteFrame){
+void update_unit_animation() {
+    ++current_sprite_animation_counter;
+
+    if (current_sprite_animation_counter >= SPRITE_ANIMATION_FRAME_TIME) {
+        current_sprite_animation_counter = 0;
+
+        if (sprite_animation_ascending) {
+            if (current_sprite_frame_index >= SPRITE_ANIMATION_MAX_FRAME) {
+                sprite_animation_ascending = 0;
+            } else {
+                ++current_sprite_frame_index;
+            }
+        } else {
+            if (current_sprite_frame_index <= 0) {
+                sprite_animation_ascending = 1;
+            } else {
+                --current_sprite_frame_index;
+            }
+        }
+    }
+}
+
+
+void draw_visible_units(){
     unsigned char i;
 
     for(i = 0; i < MAX_UNIT_COUNT; ++i){
-        draw_unit(&units_array[i], spriteFrame);
+        draw_unit(&units_array[i], current_sprite_frame_index);
     }
 }
 
@@ -56,7 +86,6 @@ void draw_unit(Unit *unit, char spriteFrame){
             animationOffset = spriteFrame * TILE_SIZE;
         }
         spritePosition = get_unit_sprite_point(unit->unitType);
-        //queue_draw_box((unit->tile_position.x * TILE_SIZE) - camera_x, (unit->tile_position.y * TILE_SIZE) - camera_y, TILE_SIZE, TILE_SIZE, 96);
         queue_draw_sprite((unit->tile_position.x * TILE_SIZE) - camera_x, (unit->tile_position.y * TILE_SIZE) - camera_y, TILE_SIZE, TILE_SIZE, spritePosition.x + animationOffset, spritePosition.y, *spriteSheet);
     }
 }
