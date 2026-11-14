@@ -11,6 +11,7 @@
 #include "ui.h"
 #include "units.h"
 #include "camera.h"
+#include "gt/feature/text/text.h"
 
 
 enum GAME_PROGRESSION_POINT {
@@ -64,11 +65,8 @@ void draw(){
     draw_level_map();
 
     switch(currentPoint){
-        
         case CURSOR_MOVEMENT:
-
             ui_draw_hovered_tile(&level_01);
-
             break;
     }
 }
@@ -89,6 +87,9 @@ void queued_draw(){
 
 
 int main () {
+    text_init();
+    text_load_font();
+
     start();
     
     while (1) {
