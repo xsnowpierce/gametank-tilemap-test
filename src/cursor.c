@@ -7,7 +7,6 @@
 #include "gt/gfx/draw_queue.h"
 #include "vector.h"
 
-
 void on_cursor_move();
 void query_cursor_move();
 
@@ -21,7 +20,6 @@ void query_cursor_move();
 #define CURSOR_MINIMUM_TILE_Y 2
 
 #define INPUT_FRAMES_DELAY 4
-#define CAMERA_MOVE_TIME 7
 
 unsigned char cursor_tile_position_x = CURSOR_MINIMUM_TILE_X, cursor_tile_position_y = CURSOR_MINIMUM_TILE_Y;
 SpriteSlot *cursorSpritePage;
@@ -29,7 +27,6 @@ SpriteSlot *cursorSpritePage;
 unsigned char current_input_frame_delay = 0;
 unsigned char current_sprite_frame_tick = 0;
 unsigned char spriteUse = 0;
-
 
 void initialize_cursor(SpriteSlot *slot){
     cursorSpritePage = slot;
@@ -48,9 +45,12 @@ static signed char move_axis(signed char position, signed char input, unsigned c
     return position;
 }
 
-
 void update_cursor(){
     
+    if(current_input_frame_delay > 0){
+        --current_input_frame_delay;
+    }
+
     if(camera_is_moving == 0){
         query_cursor_move();
     }
@@ -69,16 +69,10 @@ void update_cursor(){
     }
 }
 
-
 void query_cursor_move(){
     signed char input_x = 0, input_y = 0;
     signed char cursor_old_x = cursor_tile_position_x;
     signed char cursor_old_y = cursor_tile_position_y;
-    
-    if(current_input_frame_delay > 0){
-        --current_input_frame_delay;
-        return;
-    }
 
     if(player1_buttons & INPUT_MASK_LEFT) {
         --input_x;
@@ -102,7 +96,6 @@ void query_cursor_move(){
     }
 }
 
-
 void on_cursor_move(){
     int current_x = cursor_tile_position_x - (camera_x / TILE_SIZE);
     int current_y = cursor_tile_position_y - (camera_y / TILE_SIZE);
@@ -120,17 +113,12 @@ void on_cursor_move(){
         target_camera_y = TILE_SIZE;
     }
 
-
     if(target_camera_x != 0 || target_camera_y != 0){
-        move_camera(target_camera_x, target_camera_y, CAMERA_MOVE_TIME);
+        move_camera(target_camera_x, target_camera_y);
     }
 }
 
-
-
-
 void draw_cursor(){
-
     if(spriteUse == 0){
         queue_draw_sprite((cursor_tile_position_x * TILE_SIZE) - camera_x, (cursor_tile_position_y * TILE_SIZE) - camera_y, 8, 8, 8, 0, *cursorSpritePage);
     }

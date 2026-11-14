@@ -7,7 +7,7 @@ extern unsigned int camera_y;
 extern char camera_is_moving;
 
 void update_camera();
-void move_camera(signed int d_x, signed int d_y, unsigned char move_frame_duration);
+void move_camera(signed int d_x, signed int d_y);
 void set_camera_position(char x, char y);
 
 #endif
