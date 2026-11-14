@@ -1,4 +1,4 @@
-#include "drawing.h"
+#include "map_drawing.h"
 #include "camera.h"
 #include "gen/assets/tileset.h"
 #include "gt/banking.h"
@@ -7,7 +7,7 @@
 #include "gt/gfx/gfx_sys.h"
 #include "gt/gfx/sprites.h"
 #include "gt/gfx/draw_queue.h"
-#include "map.h"
+#include "map_defs.h"
 
 int load_map_into_gram(MapLevel *maplevel);
 void load_drawing();
@@ -23,9 +23,8 @@ int load_map_into_gram(MapLevel *maplevel){
     unsigned int chunk_x, chunk_y;
     unsigned int map_x, map_y;
     unsigned int source_index;
-    unsigned int chunks_across;
     unsigned char x, y;
-    unsigned char current_rom_bank, current_quadrant = QUADRANT_3;
+    unsigned char current_quadrant = QUADRANT_3;
     
     SpriteSlot currentTileset = allocate_sprite(maplevel->tilesetPage);
 

@@ -1,9 +1,10 @@
 #include "ui.h"
 #include "camera.h"
+#include "gt/gfx/gfx_sys.h"
 #include "gt/gfx/sprites.h"
 #include "gt/feature/text/text.h"
 #include "cursor.h"
-#include "map.h"
+#include "map_defs.h"
 
 SpriteSlot textSlot;
 
@@ -34,6 +35,7 @@ void ui_draw_hovered_tile(MapLevel *level){
     text_print_string(", ");
     text_sprint_int(number_text, tile_id);
     text_print_string(number_text);
+    await_drawing();
 }
 
 void draw_camera_and_cursor_position(){

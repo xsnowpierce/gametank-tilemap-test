@@ -9,28 +9,30 @@
 
 
 void on_cursor_move();
+void query_cursor_move();
 
 #define TILE_SIZE 8
+
+#define INPUT_FRAMES_DELAY 5
+#define SPRITE_ANIMATION_TICK_FRAMES 30
+
 #define CURSOR_MAXIMUM_TILE_X 30
 #define CURSOR_MAXIMUM_TILE_Y 29
-
 #define CURSOR_MINIMUM_TILE_X 1
 #define CURSOR_MINIMUM_TILE_Y 2
 
+#define CAMERA_MOVE_TIME 5
 
 unsigned char cursor_tile_position_x = CURSOR_MINIMUM_TILE_X, cursor_tile_position_y = CURSOR_MINIMUM_TILE_Y;
-SpriteSlot cursorSpritePage;
+SpriteSlot *cursorSpritePage;
 
-const unsigned char INPUT_FRAMES_DELAY = 7;
 unsigned char current_input_frame_delay = 0;
-
-const unsigned char SPRITE_ANIMATION_TICK_FRAMES = 3;
 unsigned char current_sprite_frame_tick = 0;
 unsigned char spriteUse = 0;
 
 
-void initialize_cursor(){
-    cursorSpritePage = allocate_sprite(&ASSET__player__player_bmp_load_list);
+void initialize_cursor(SpriteSlot *slot){
+    cursorSpritePage = slot;
 }
 
 static signed char move_axis(signed char position, signed char input, unsigned char minimum, unsigned char maximum){
@@ -48,11 +50,31 @@ static signed char move_axis(signed char position, signed char input, unsigned c
 
 
 void update_cursor(){
+    
+    if(camera_is_moving == 0){
+        query_cursor_move();
+    }
+
+    ++current_sprite_frame_tick;
+
+    if(current_sprite_frame_tick == SPRITE_ANIMATION_TICK_FRAMES){
+        if(spriteUse == 0){
+            spriteUse = 1;
+        }
+        else{
+            spriteUse = 0;
+        }
+
+        current_sprite_frame_tick = 0;
+    }
+}
+
+
+void query_cursor_move(){
     signed char input_x = 0, input_y = 0;
     signed char cursor_old_x = cursor_tile_position_x;
     signed char cursor_old_y = cursor_tile_position_y;
-
-    PROFILER_START(1);
+    
     if(current_input_frame_delay > 0){
         --current_input_frame_delay;
         return;
@@ -71,30 +93,13 @@ void update_cursor(){
         ++input_y;
     }
 
-    
-
     cursor_tile_position_x = move_axis(cursor_tile_position_x, input_x, CURSOR_MINIMUM_TILE_X, CURSOR_MAXIMUM_TILE_X);
     cursor_tile_position_y = move_axis(cursor_tile_position_y, input_y, CURSOR_MINIMUM_TILE_Y, CURSOR_MAXIMUM_TILE_Y);
 
     if (cursor_tile_position_x != cursor_old_x || cursor_tile_position_y != cursor_old_y){
         on_cursor_move();
+        current_input_frame_delay = INPUT_FRAMES_DELAY;
     }
-
-    current_input_frame_delay = INPUT_FRAMES_DELAY;
-
-    ++current_sprite_frame_tick;
-
-    if(current_sprite_frame_tick == SPRITE_ANIMATION_TICK_FRAMES){
-        if(spriteUse == 0){
-            spriteUse = 1;
-        }
-        else{
-            spriteUse = 0;
-        }
-
-        current_sprite_frame_tick = 0;
-    }
-    PROFILER_END(1);
 }
 
 
@@ -102,26 +107,34 @@ void on_cursor_move(){
     int current_x = cursor_tile_position_x - (camera_x / TILE_SIZE);
     int current_y = cursor_tile_position_y - (camera_y / TILE_SIZE);
 
+    signed char target_camera_x = 0, target_camera_y = 0;
+
     if (current_x <= 1){
-        move_camera(-TILE_SIZE, 0);
-    }else if (current_x >= 15){
-        move_camera(TILE_SIZE, 0);
+        target_camera_x = -TILE_SIZE;
+    }else if (current_x >= 14){
+        target_camera_x = TILE_SIZE;
     }
     if (current_y <= 2){
-        move_camera(0, -TILE_SIZE);
-    }else if (current_y >= 14){
-        move_camera(0, TILE_SIZE);
+        target_camera_y = -TILE_SIZE;
+    }else if (current_y >= 13){
+        target_camera_y = TILE_SIZE;
+    }
+
+
+    if(target_camera_x != 0 || target_camera_y != 0){
+        move_camera(target_camera_x, target_camera_y, CAMERA_MOVE_TIME);
     }
 }
+
 
 
 
 void draw_cursor(){
 
     if(spriteUse == 0){
-        queue_draw_sprite((cursor_tile_position_x * TILE_SIZE) - camera_x, (cursor_tile_position_y * TILE_SIZE) - camera_y, 8, 8, 8, 0, cursorSpritePage);
+        queue_draw_sprite((cursor_tile_position_x * TILE_SIZE) - camera_x, (cursor_tile_position_y * TILE_SIZE) - camera_y, 8, 8, 8, 0, *cursorSpritePage);
     }
     else{
-        queue_draw_sprite((cursor_tile_position_x  * TILE_SIZE) - camera_x, (cursor_tile_position_y * TILE_SIZE) - camera_y, 8, 8, 16, 0, cursorSpritePage);
+        queue_draw_sprite((cursor_tile_position_x  * TILE_SIZE) - camera_x, (cursor_tile_position_y * TILE_SIZE) - camera_y, 8, 8, 16, 0, *cursorSpritePage);
     }
 }

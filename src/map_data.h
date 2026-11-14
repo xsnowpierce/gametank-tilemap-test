@@ -1,5 +1,8 @@
-#include "map.h"
+#ifndef MAP_DATA_H
+#define MAP_DATA_H
+
 #include "gen/assets/tileset.h"
+#include "map_defs.h"
 
 static const unsigned char map_01_data[] = {
 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
@@ -94,3 +97,6 @@ MapLevel level_01 = {
     &ASSET__tileset__tileset_bmp_load_list, 32, 32, map_01_data
 };
 
+
+
+#endif

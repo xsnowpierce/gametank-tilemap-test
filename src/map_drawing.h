@@ -1,7 +1,7 @@
-#ifndef DRAWING_H
-#define DRAWING_H
+#ifndef MAP_DRAWING_H
+#define MAP_DRAWING_H
 
-#include "map.h"
+#include "map_defs.h"
 
 int load_map_into_gram(MapLevel *maplevel);
 //void load_drawing();

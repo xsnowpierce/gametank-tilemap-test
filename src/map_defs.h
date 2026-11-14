@@ -1,5 +1,5 @@
-#ifndef MAP_H
-#define MAP_H
+#ifndef MAP_DEFS_H
+#define MAP_DEFS_H
 
 #include "gt/gfx/sprites.h"
 #include "vector.h"
@@ -13,8 +13,6 @@ typedef struct {
     const unsigned char MAP_WIDTH, MAP_HEIGHT;
     const unsigned char *TILE_DATA;
 } MapLevel;
-
-extern MapLevel level_01;
 
 static unsigned char get_tile_from_point(MapLevel *level, vector_u8b point){
     
