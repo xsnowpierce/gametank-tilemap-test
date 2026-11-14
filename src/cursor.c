@@ -19,7 +19,7 @@ void query_cursor_move();
 #define CURSOR_MINIMUM_TILE_X 1
 #define CURSOR_MINIMUM_TILE_Y 2
 
-#define INPUT_FRAMES_DELAY 4
+#define INPUT_FRAMES_DELAY 5
 
 unsigned char cursor_tile_position_x = CURSOR_MINIMUM_TILE_X, cursor_tile_position_y = CURSOR_MINIMUM_TILE_Y;
 SpriteSlot *cursorSpritePage;
@@ -46,11 +46,6 @@ static signed char move_axis(signed char position, signed char input, unsigned c
 }
 
 void update_cursor(){
-    
-    if(current_input_frame_delay > 0){
-        --current_input_frame_delay;
-    }
-
     if(camera_is_moving == 0){
         query_cursor_move();
     }
@@ -67,12 +62,21 @@ void update_cursor(){
 
         current_sprite_frame_tick = 0;
     }
+
+    if(current_input_frame_delay > 0){
+        --current_input_frame_delay;
+    }
 }
 
 void query_cursor_move(){
     signed char input_x = 0, input_y = 0;
     signed char cursor_old_x = cursor_tile_position_x;
     signed char cursor_old_y = cursor_tile_position_y;
+
+
+    if(current_input_frame_delay > 0){
+        return;
+    }
 
     if(player1_buttons & INPUT_MASK_LEFT) {
         --input_x;

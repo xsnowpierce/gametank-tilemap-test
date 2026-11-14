@@ -1,6 +1,6 @@
 #include "camera.h"
 
-#define CAMERA_MOVE_TIME 7
+#define CAMERA_MOVE_TIME 8
 
 unsigned int camera_x = 0, camera_y = 0;
 
@@ -12,9 +12,14 @@ static int start_camera_x, start_camera_y;
 static unsigned int move_duration;
 static unsigned int move_elapsed;
 
+// idk how any of this is working with these casts but i dont want to touch it
 void move_camera(int d_x, int d_y){
     int next_x = (int) camera_x + d_x;
     int next_y = (int) camera_y + d_y;
+
+    if(camera_is_moving){
+        return;
+    }
 
     if(d_x == 0 && d_y == 0){
         return;
@@ -34,17 +39,9 @@ void move_camera(int d_x, int d_y){
     start_camera_y = (int) camera_y;
     move_duration = CAMERA_MOVE_TIME;
     move_elapsed = 0;
-
-    if (move_duration == 0) {
-        camera_x = target_camera_x;
-        camera_y = target_camera_y;
-        camera_is_moving = 0;
-    } else {
-        camera_is_moving = 1;
-    }
 }
 
-void update_camera(void){
+void update_camera(){
     if (!camera_is_moving)
         return;
 
@@ -59,7 +56,6 @@ void update_camera(void){
         camera_is_moving = 0;
     }
 }
-
 
 void set_camera_position(char x, char y){
     camera_x = x;
