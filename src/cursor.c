@@ -14,12 +14,13 @@ void query_cursor_move();
 
 #define SPRITE_ANIMATION_TICK_FRAMES 30
 
-#define CURSOR_MAXIMUM_TILE_X 30
-#define CURSOR_MAXIMUM_TILE_Y 29
-#define CURSOR_MINIMUM_TILE_X 1
-#define CURSOR_MINIMUM_TILE_Y 2
+#define CURSOR_MAXIMUM_TILE_X 31
+#define CURSOR_MAXIMUM_TILE_Y 30
+#define CURSOR_MINIMUM_TILE_X 0
+#define CURSOR_MINIMUM_TILE_Y 1
 
 #define INPUT_FRAMES_DELAY 5
+#define FIRST_MOVEMENT_TICK_DELAY 15
 
 unsigned char cursor_tile_position_x = CURSOR_MINIMUM_TILE_X, cursor_tile_position_y = CURSOR_MINIMUM_TILE_Y;
 SpriteSlot *cursorSpritePage;
@@ -27,6 +28,9 @@ SpriteSlot *cursorSpritePage;
 unsigned char current_input_frame_delay = 0;
 unsigned char current_sprite_frame_tick = 0;
 unsigned char spriteUse = 0;
+
+char is_holding_movement = 0;
+char current_holding_movement_delay = 0;
 
 void initialize_cursor(SpriteSlot *slot){
     cursorSpritePage = slot;
@@ -74,10 +78,7 @@ void query_cursor_move(){
     signed char cursor_old_y = cursor_tile_position_y;
 
 
-    if(current_input_frame_delay > 0){
-        return;
-    }
-
+    // read inputs
     if(player1_buttons & INPUT_MASK_LEFT) {
         --input_x;
     }
@@ -91,12 +92,42 @@ void query_cursor_move(){
         ++input_y;
     }
 
+    // make sure we are allowed to move it
+    if(current_input_frame_delay > 0){
+        return;
+    }
+
+    if(!is_holding_movement){
+        // player isnt holding down movement yet.
+        // 
+        is_holding_movement = 1;
+        current_holding_movement_delay = FIRST_MOVEMENT_TICK_DELAY;
+    }else{
+        if(input_x == 0 && input_y == 0){
+            is_holding_movement = 0;
+            current_holding_movement_delay = 0;
+        }
+        
+        if(current_holding_movement_delay > 0){
+            --current_holding_movement_delay;
+            return;
+        }
+
+    }
+
+    
+
     cursor_tile_position_x = move_axis(cursor_tile_position_x, input_x, CURSOR_MINIMUM_TILE_X, CURSOR_MAXIMUM_TILE_X);
     cursor_tile_position_y = move_axis(cursor_tile_position_y, input_y, CURSOR_MINIMUM_TILE_Y, CURSOR_MAXIMUM_TILE_Y);
 
     if (cursor_tile_position_x != cursor_old_x || cursor_tile_position_y != cursor_old_y){
         on_cursor_move();
         current_input_frame_delay = INPUT_FRAMES_DELAY;
+    }else{
+        // player has stopped moving the cursor
+        // reset values
+        is_holding_movement = 0;
+        current_holding_movement_delay = 0;
     }
 }
 
