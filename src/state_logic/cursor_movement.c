@@ -5,6 +5,8 @@
 #include "../units.h"
 #include "../camera.h"
 #include "../gt/input.h"
+#include "unit_selected.h"
+#include "../gt/feature/text/text.h"
 
 Unit clickedUnit;
 
@@ -21,7 +23,8 @@ void update_state_cursor_movement(){
         cursorClickResult = get_unit_on_tile(cursor_tile_position_x, cursor_tile_position_y, &clickedUnit);
         if(cursorClickResult){
             // we clicked on a unit!
-            currentGameState = SELECTING_UNIT;
+            change_game_state(SELECTING_UNIT);
+            selectedUnit = clickedUnit;
         }
         return;
     }
@@ -40,5 +43,11 @@ void queue_draw_state_cursor_movement(){
 
 
 void draw_state_cursor_movement(){
+
+    text_cursor_x = 0;
+    text_cursor_y = 8;
+    text_color = TEXT_COLOR_WHITE;
+    text_print_string("JAREDO");
+    await_drawing();
 
 }

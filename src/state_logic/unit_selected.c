@@ -1,7 +1,9 @@
 #include "unit_selected.h"
 
-void initialize_state_unit_selected(){
+Unit selectedUnit;
 
+void initialize_state_unit_selected(){
+    
 }
 
 void update_state_unit_selected(){
