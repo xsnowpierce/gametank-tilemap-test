@@ -90,6 +90,25 @@ void draw_unit(Unit *unit, char spriteFrame){
     }
 }
 
+int get_unit_on_tile(char tile_x, char tile_y, Unit *return_unit){
+    char i = 0;
+    
+    for(i = 0; i < MAX_UNIT_COUNT; ++i){
+        if(units_array[i].tile_position.x != tile_x){
+            continue;
+        }
+
+        if(units_array[i].tile_position.y != tile_y){
+            continue;
+        }
+
+        *return_unit = units_array[i];
+        return 1;
+    } 
+
+    return 0;
+}
+
 vector_u8b get_unit_sprite_point(char type){
     vector_u8b return_vector;
 

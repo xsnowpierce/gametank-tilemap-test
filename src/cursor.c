@@ -50,10 +50,6 @@ static signed char move_axis(signed char position, signed char input, unsigned c
 }
 
 void update_cursor(){
-    if(camera_is_moving == 0){
-        query_cursor_move();
-    }
-
     ++current_sprite_frame_tick;
 
     if(current_sprite_frame_tick == SPRITE_ANIMATION_TICK_FRAMES){
@@ -69,6 +65,10 @@ void update_cursor(){
 
     if(current_input_frame_delay > 0){
         --current_input_frame_delay;
+    }
+
+    if(camera_is_moving == 0){
+        query_cursor_move();
     }
 }
 

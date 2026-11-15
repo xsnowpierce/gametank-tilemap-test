@@ -13,6 +13,7 @@ enum {
 
 typedef struct {
     char unitType;
+    char* unitName;
     Statistics unitStats;
     vector_u8b tile_position;
     char is_on_screen;
@@ -27,6 +28,7 @@ void update_unit_cache();
 void draw_visible_units();
 void draw_unit(Unit *unit, char spriteFrame);
 void update_unit_animation();
+int get_unit_on_tile(char tile_x, char tile_y, Unit *return_unit);
 
 vector_u8b get_unit_sprite_point(char type);
 
