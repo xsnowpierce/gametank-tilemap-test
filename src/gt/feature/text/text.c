@@ -3,21 +3,21 @@
 #include "gametank.h"
 #include "banking.h"
 #include "../../gfx/draw_direct.h"
-#include "../../../gen/assets/sdk_default.h"
+#include "../../../gen/assets/font.h"
 #include "../../../gen/modules_enabled.h"
 #include "../../../gen/bank_nums.h"
 
-#define SPRITE_CHAR_W 8
-#define SPRITE_CHAR_H 8
+#define SPRITE_CHAR_W 4
+#define SPRITE_CHAR_H 6
 #define SPRITE_ROW_0_F 0x68
 #define SPRITE_ROW_G_V 0x70
 #define SPRITE_ROW_W_Z 0x78
 #define SPRITE_CHAR_BLANK_X 0x70
 #define SPRITE_CHAR_BLANK_Y 0x78
 
-#define TEXT_CHAR_WIDTH 8
-#define TEXT_CHAR_HEIGHT 8
-#define TEXT_LINE_HEIGHT 8
+#define TEXT_CHAR_WIDTH 4
+#define TEXT_CHAR_HEIGHT 6
+#define TEXT_LINE_HEIGHT 6
 
 #ifdef ENABLE_MODULE_TEXT
 
@@ -36,7 +36,7 @@ void text_init() {
 }
 
 SpriteSlot text_load_font() {
-    font_slot = allocate_sprite(&ASSET__sdk_default__bios8_bmp_load_list);
+    font_slot = allocate_sprite(&ASSET__font__bios4_bmp_load_list);
     font_offset_x = SPRITE_OFFSET_X(font_slot);
     font_offset_y = SPRITE_OFFSET_Y(font_slot);
     return font_slot;

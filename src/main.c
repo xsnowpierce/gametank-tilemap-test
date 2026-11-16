@@ -9,13 +9,12 @@
 #include "ui.h"
 #include "units.h"
 #include "gt/feature/text/text.h"
-#include "text_drawing.h"
 
 #include "state_logic/game_state.h"
 
 Unit unit_bank[MAX_UNIT_COUNT] = {
-    {SWORDSMAN, "", { 1, 1, 1 }, {8, 8}, 0, 1},
-    {MAGE, "", {1,1,1}, {10, 8}, 0, 1}
+    {SWORDSMAN, "PIERCER", { 1, 1, 1 }, {8, 8}, 0, 1},
+    {MAGE, "CASTOR", {1,1,1}, {10, 8}, 0, 1}
 };
 
 void start_game(){
@@ -34,7 +33,7 @@ void start_game(){
     load_map_into_gram(&level_01);
     do_ram_loading();
 
-    initialize_text();
+    //initialize_text();
 
     change_game_state(CURSOR_MOVEMENT);
 }

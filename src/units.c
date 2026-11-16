@@ -33,7 +33,7 @@ void update_unit_cache(){
     unsigned char i;
 
     for(i = 0; i < MAX_UNIT_COUNT; ++i){
-        if(units_array[i].unitType != NULL){
+        if(units_array[i].unitJob != NULL){
             
             // check if the unit is on screen to be rendered
             if(units_array[i].tile_position.x < camera_tile_x || units_array[i].tile_position.y < camera_tile_y || units_array[i].tile_position.x > camera_furthest_right || units_array[i].tile_position.y > camera_furthest_down){
@@ -85,7 +85,7 @@ void draw_unit(Unit *unit, char spriteFrame){
         if(unit->do_animation){
             animationOffset = spriteFrame * TILE_SIZE;
         }
-        spritePosition = get_unit_sprite_point(unit->unitType);
+        spritePosition = get_unit_sprite_point(unit->unitJob);
         queue_draw_sprite((unit->tile_position.x * TILE_SIZE) - camera_x, (unit->tile_position.y * TILE_SIZE) - camera_y, TILE_SIZE, TILE_SIZE, spritePosition.x + animationOffset, spritePosition.y, *spriteSheet);
     }
 }
@@ -130,4 +130,15 @@ vector_u8b get_unit_sprite_point(char type){
     }
 
     return return_vector;
+}
+
+char* get_job_name(enum UNIT_JOB job){
+    switch(job){
+        case SWORDSMAN:
+            return "KNIGHT";
+        case MAGE:
+            return "MAGE";
+        default:
+            return "NULL";
+    }
 }

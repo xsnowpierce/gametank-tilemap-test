@@ -7,12 +7,12 @@
 
 #define MAX_UNIT_COUNT 18
 
-enum {
+enum UNIT_JOB {
     NULL = 0, SWORDSMAN = 1, MAGE = 2
 };
 
 typedef struct {
-    char unitType;
+    enum UNIT_JOB unitJob;
     char* unitName;
     Statistics unitStats;
     vector_u8b tile_position;
@@ -29,6 +29,7 @@ void draw_visible_units();
 void draw_unit(Unit *unit, char spriteFrame);
 void update_unit_animation();
 int get_unit_on_tile(char tile_x, char tile_y, Unit *return_unit);
+char* get_job_name(enum UNIT_JOB job);
 
 vector_u8b get_unit_sprite_point(char type);
 
