@@ -4,6 +4,7 @@
 #include "../units.h"
 
 extern Unit selectedUnit;
+extern SpriteSlot uiSpriteSlot;
 
 void initialize_state_unit_selected();
 void update_state_unit_selected();

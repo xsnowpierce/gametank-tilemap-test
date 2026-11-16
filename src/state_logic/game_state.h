@@ -8,6 +8,7 @@ enum GAME_STATE {
 extern enum GAME_STATE currentGameState;
 
 void change_game_state(enum GAME_STATE targetState);
+void do_ram_loading();
 void initialize_game_state(enum GAME_STATE targetState);
 void update_game_state(enum GAME_STATE targetState);
 void draw_game_state(enum GAME_STATE targetState);

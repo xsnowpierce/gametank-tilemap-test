@@ -9,6 +9,7 @@
 #include "ui.h"
 #include "units.h"
 #include "gt/feature/text/text.h"
+#include "text_drawing.h"
 
 #include "state_logic/game_state.h"
 
@@ -31,6 +32,10 @@ void start_game(){
     initialize_ui();
 
     load_map_into_gram(&level_01);
+    do_ram_loading();
+
+    initialize_text();
+
     change_game_state(CURSOR_MOVEMENT);
 }
 

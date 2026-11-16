@@ -1,12 +1,17 @@
 #include "game_state.h"
 #include "cursor_movement.h"
 #include "unit_selected.h"
+#include "../gen/assets/ui.h"
 
 enum GAME_STATE currentGameState = CURSOR_MOVEMENT;
 
 void change_game_state(enum GAME_STATE targetState){
     initialize_game_state(targetState);
     currentGameState = targetState;
+}
+
+void do_ram_loading(){
+    uiSpriteSlot = allocate_sprite(&ASSET__ui__uitilesheet_bmp_load_list);
 }
 
 void initialize_game_state(enum GAME_STATE targetState){
