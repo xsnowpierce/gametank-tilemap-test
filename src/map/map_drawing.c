@@ -1,15 +1,15 @@
 #include "map_drawing.h"
-#include "camera.h"
-#include "gen/assets/tileset.h"
-#include "gt/gametank.h"
-#include "gt/gfx/draw_direct.h"
-#include "gt/gfx/gfx_sys.h"
-#include "gt/gfx/sprites.h"
-#include "gt/gfx/draw_queue.h"
+#include "../camera.h"
+#include "../gen/assets/tileset.h"
+#include "../gt/gametank.h"
+#include "../gt/gfx/draw_direct.h"
+#include "../gt/gfx/gfx_sys.h"
+#include "../gt/gfx/sprites.h"
+#include "../gt/gfx/draw_queue.h"
 #include "map_defs.h"
 
-#include "gt/banking.h" //Banking API
-#include "gen/bank_nums.h"
+#include "../gt/banking.h" //Banking API
+#include "../gen/bank_nums.h"
 
 int load_map_into_gram(unsigned char map_id);
 void load_drawing();

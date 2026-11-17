@@ -2,7 +2,7 @@
 #include "cursor_movement.h"
 #include "unit_selected.h"
 #include "../gen/assets/ui.h"
-#include "../map_drawing.h"
+#include "../map/map_drawing.h"
 
 enum GAME_STATE currentGameState = CURSOR_MOVEMENT;
 unsigned char current_map_id;

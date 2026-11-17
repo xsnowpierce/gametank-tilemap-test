@@ -4,7 +4,7 @@
 #include "gt/gfx/gfx_sys.h"
 #include "gt/gfx/sprites.h"
 
-#include "map_drawing.h"
+#include "map/map_drawing.h"
 #include "gt/input.h"
 #include "ui.h"
 #include "units.h"

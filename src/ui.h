@@ -1,7 +1,7 @@
 #ifndef UI_H
 #define UI_H
 
-#include "map_defs.h"
+#include "map/map_defs.h"
 
 void initialize_ui();
 void update_ui();

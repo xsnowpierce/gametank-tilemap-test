@@ -1,8 +1,8 @@
 #include "map_defs.h"
 #include "map_data.h"
 
-#include "gt/banking.h" //Banking API
-#include "gen/bank_nums.h"
+#include "../gt/banking.h" //Banking API
+#include "../gen/bank_nums.h"
 
 const unsigned char* get_map_from_id(char map_id){
     const unsigned char* target_map_array;

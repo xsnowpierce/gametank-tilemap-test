@@ -4,7 +4,7 @@
     {
       "label": "GameTank: Clean, Make, Emulate",
       "type": "shell",
-      "command": "make clean && make import && make emulate",
+      "command": "sudo make clean && sudo make import && make emulate",
       "options": {
         "cwd": "${workspaceFolder}",
         "env": {

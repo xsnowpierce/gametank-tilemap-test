@@ -1,7 +1,7 @@
 #ifndef GAME_STATE_H
 #define GAME_STATE_H
 
-#include "../map_defs.h"
+#include "../map/map_defs.h"
 
 enum GAME_STATE {
     CURSOR_MOVEMENT, SELECTING_UNIT
