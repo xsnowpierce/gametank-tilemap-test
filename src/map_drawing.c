@@ -6,7 +6,6 @@
 #include "gt/gfx/gfx_sys.h"
 #include "gt/gfx/sprites.h"
 #include "gt/gfx/draw_queue.h"
-#include "map_data.h"
 #include "map_defs.h"
 
 #include "gt/banking.h" //Banking API
@@ -21,6 +20,8 @@ void draw();
 #define GRAM_BANK_WIDTH 128
 #define TILES_PER_ROW (GRAM_BANK_WIDTH / TILE_SIZE)
 #define MAP_RAM_BANK 7
+#define MAP_WIDTH 32
+#define MAP_HEIGHT 32
 
 int load_map_into_gram(unsigned char map_id){
     unsigned int chunk_x, chunk_y;
@@ -28,7 +29,7 @@ int load_map_into_gram(unsigned char map_id){
     unsigned int source_index;
     unsigned char x, y;
     unsigned char current_quadrant = QUADRANT_3;
-    MapLevel *target_map_level;
+    const unsigned char *target_map_level;
     SpriteSlot currentTileset = allocate_sprite(&ASSET__tileset__tileset_bmp_load_list);
 
 
@@ -39,28 +40,28 @@ int load_map_into_gram(unsigned char map_id){
     // disable interrupts before we do the heavy function
     __asm__("SEI");
 
-    target_map_level = &game_level_array[map_id];
+    target_map_level = get_map_from_id(map_id);
     // load the map now
-    for (chunk_y = 0; chunk_y < target_map_level->MAP_HEIGHT; chunk_y += TILES_PER_ROW) {
-        for (chunk_x = 0; chunk_x < target_map_level->MAP_WIDTH; chunk_x += TILES_PER_ROW) {
+    for (chunk_y = 0; chunk_y < MAP_HEIGHT; chunk_y += TILES_PER_ROW) {
+        for (chunk_x = 0; chunk_x < MAP_WIDTH; chunk_x += TILES_PER_ROW) {
 
             // current_ram_bank = (chunk_y / TILES_PER_ROW) * chunks_across + (chunk_x / TILES_PER_ROW);
 
             for (y = 0; y < TILES_PER_ROW; ++y) {
                 map_y = chunk_y + y;
-                if (map_y >= target_map_level->MAP_HEIGHT) {
+                if (map_y >= MAP_HEIGHT) {
                     break;
                 }
 
                 for (x = 0; x < TILES_PER_ROW; ++x) {
                     map_x = chunk_x + x;
-                    if (map_x >= target_map_level->MAP_WIDTH) {
+                    if (map_x >= MAP_WIDTH) {
                         break;
                     }
 
-                    source_index = map_y * target_map_level->MAP_WIDTH + map_x;
+                    source_index = (map_y << 5) + map_x;
 
-                    draw_tile_into_gram(x,y,currentTileset,target_map_level->TILE_DATA[source_index] - 1,current_quadrant | MAP_RAM_BANK);
+                    draw_tile_into_gram(x,y,currentTileset, target_map_level[source_index] - 1,current_quadrant | MAP_RAM_BANK);
                 }
             }
             current_quadrant -= QUADRANT_1;

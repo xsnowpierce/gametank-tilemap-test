@@ -1,11 +1,8 @@
 #include "cursor.h"
 #include "camera.h"
-#include "gt/gametank.h"
 #include "gt/gfx/sprites.h"
 #include "gt/input.h"
-#include "gen/assets/player.h"
 #include "gt/gfx/draw_queue.h"
-#include "vector.h"
 
 void on_cursor_move();
 void query_cursor_move();
