@@ -9,15 +9,11 @@ enum TILE {
 };
 
 typedef struct {
-    const SpritePage *tilesetPage;
     const unsigned char MAP_WIDTH, MAP_HEIGHT;
     const unsigned char *TILE_DATA;
 } MapLevel;
 
-static unsigned char get_tile_from_point(MapLevel *level, vector_u8b point){
-    
-    return level->TILE_DATA[point.y * level->MAP_WIDTH + point.x];
-}
+static unsigned char get_tile_from_point(unsigned char map_id, vector_u8b point);
 
 static const char * get_tile_name_from_id(unsigned char id){
     switch(id){
@@ -37,5 +33,7 @@ static const char * get_tile_name_from_id(unsigned char id){
             return "NULL";
     }
 }
+
+const MapLevel* get_map_from_id(char id);
 
 #endif

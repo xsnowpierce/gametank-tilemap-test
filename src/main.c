@@ -3,6 +3,7 @@
 #include "gt/gfx/draw_queue.h"
 #include "gt/gfx/gfx_sys.h"
 #include "gt/gfx/sprites.h"
+
 #include "map_data.h"
 #include "map_drawing.h"
 #include "gt/input.h"
@@ -30,10 +31,8 @@ void start_game(){
 
     initialize_ui();
 
-    load_map_into_gram(&level_01);
     do_ram_loading();
-
-    //initialize_text();
+    game_load_map(0);
 
     change_game_state(CURSOR_MOVEMENT);
 }

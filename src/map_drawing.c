@@ -1,15 +1,18 @@
 #include "map_drawing.h"
 #include "camera.h"
 #include "gen/assets/tileset.h"
-#include "gt/banking.h"
 #include "gt/gametank.h"
 #include "gt/gfx/draw_direct.h"
 #include "gt/gfx/gfx_sys.h"
 #include "gt/gfx/sprites.h"
 #include "gt/gfx/draw_queue.h"
+#include "map_data.h"
 #include "map_defs.h"
 
-int load_map_into_gram(MapLevel *maplevel);
+#include "gt/banking.h" //Banking API
+#include "gen/bank_nums.h"
+
+int load_map_into_gram(unsigned char map_id);
 void load_drawing();
 void draw_tile_into_gram(unsigned char tile_x, unsigned char tile_y, SpriteSlot source_sprite_slot, unsigned char tile_id, unsigned char target_bank);
 void draw();
@@ -19,43 +22,45 @@ void draw();
 #define TILES_PER_ROW (GRAM_BANK_WIDTH / TILE_SIZE)
 #define MAP_RAM_BANK 7
 
-int load_map_into_gram(MapLevel *maplevel){
+int load_map_into_gram(unsigned char map_id){
     unsigned int chunk_x, chunk_y;
     unsigned int map_x, map_y;
     unsigned int source_index;
     unsigned char x, y;
     unsigned char current_quadrant = QUADRANT_3;
-    
-    SpriteSlot currentTileset = allocate_sprite(maplevel->tilesetPage);
+    MapLevel *target_map_level;
+    SpriteSlot currentTileset = allocate_sprite(&ASSET__tileset__tileset_bmp_load_list);
 
-    //chunks_across = (maplevel->MAP_WIDTH + TILES_PER_ROW - 1) / TILES_PER_ROW;
+
+    // change the rom bank to the map's bank
+    pop_rom_bank();
+    change_rom_bank(BANK_PROG0);
 
     // disable interrupts before we do the heavy function
     __asm__("SEI");
 
+    target_map_level = &game_level_array[map_id];
     // load the map now
-    for (chunk_y = 0; chunk_y < maplevel->MAP_HEIGHT; chunk_y += TILES_PER_ROW) {
-        for (chunk_x = 0; chunk_x < maplevel->MAP_WIDTH; chunk_x += TILES_PER_ROW) {
+    for (chunk_y = 0; chunk_y < target_map_level->MAP_HEIGHT; chunk_y += TILES_PER_ROW) {
+        for (chunk_x = 0; chunk_x < target_map_level->MAP_WIDTH; chunk_x += TILES_PER_ROW) {
 
-            
-
-            // current_rom_bank = (chunk_y / TILES_PER_ROW) * chunks_across + (chunk_x / TILES_PER_ROW);
+            // current_ram_bank = (chunk_y / TILES_PER_ROW) * chunks_across + (chunk_x / TILES_PER_ROW);
 
             for (y = 0; y < TILES_PER_ROW; ++y) {
                 map_y = chunk_y + y;
-                if (map_y >= maplevel->MAP_HEIGHT) {
+                if (map_y >= target_map_level->MAP_HEIGHT) {
                     break;
                 }
 
                 for (x = 0; x < TILES_PER_ROW; ++x) {
                     map_x = chunk_x + x;
-                    if (map_x >= maplevel->MAP_WIDTH) {
+                    if (map_x >= target_map_level->MAP_WIDTH) {
                         break;
                     }
 
-                    source_index = map_y * maplevel->MAP_WIDTH + map_x;
+                    source_index = map_y * target_map_level->MAP_WIDTH + map_x;
 
-                    draw_tile_into_gram(x,y,currentTileset,maplevel->TILE_DATA[source_index] - 1,current_quadrant | MAP_RAM_BANK);
+                    draw_tile_into_gram(x,y,currentTileset,target_map_level->TILE_DATA[source_index] - 1,current_quadrant | MAP_RAM_BANK);
                 }
             }
             current_quadrant -= QUADRANT_1;
@@ -64,6 +69,8 @@ int load_map_into_gram(MapLevel *maplevel){
     }
 
     __asm__("CLI"); // re-enable interrupts since we are now finished
+    push_rom_bank(); // return to the starting bank
+
     return 0;
 }
 

@@ -4,6 +4,9 @@
 #include "gen/assets/tileset.h"
 #include "map_defs.h"
 
+#define MAP_LEVEL_COUNT 1
+
+#pragma rodata-name (push, "PROG0")
 static const unsigned char map_01_data[] = {
 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
@@ -93,10 +96,10 @@ static const unsigned char map_01_data[] = {
 6, 6, 6, 6
 };
 
-MapLevel level_01 = {
-    &ASSET__tileset__tileset_bmp_load_list, 32, 32, map_01_data
+static const MapLevel game_level_array[MAP_LEVEL_COUNT] ={
+    { 32, 32, map_01_data }
 };
 
-
+#pragma rodata-name (pop)
 
 #endif
