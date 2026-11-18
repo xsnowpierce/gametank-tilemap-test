@@ -6,15 +6,14 @@
 
 #include "map/map_drawing.h"
 #include "gt/input.h"
-#include "ui.h"
 #include "units.h"
 #include "gt/feature/text/text.h"
 
 #include "state_logic/game_state.h"
 
 Unit unit_bank[MAX_UNIT_COUNT] = {
-    {SWORDSMAN, "PIERCER", { 1, 1, 1 }, {8, 8}, 0, 1},
-    {MAGE, "CASTOR", {1,1,1}, {10, 8}, 0, 1}
+    {SWORDSMAN, "JAME", { 1, 1, 1 }, {8, 8}, 0, 1},
+    {MAGE, "CRAS", {1,1,1}, {10, 8}, 0, 1}
 };
 
 void start_game(){
@@ -27,8 +26,6 @@ void start_game(){
     initialize_cursor(&playerSpriteSlot);
     set_unit_spritesheet(&playerSpriteSlot);
     load_units_into_array(unit_bank);
-
-    initialize_ui();
 
     do_ram_loading();
     game_load_map(0);

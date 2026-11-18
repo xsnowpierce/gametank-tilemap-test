@@ -5,6 +5,7 @@ typedef struct {
     unsigned char strength;
     unsigned char speed;
     unsigned char stamina;
+    unsigned char movementRange;
 } Statistics;
 
 inline unsigned char get_unit_max_health_value(Statistics *unitStats){

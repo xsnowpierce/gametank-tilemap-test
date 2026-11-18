@@ -1,12 +1,10 @@
 #include "cursor_movement.h"
 #include "../cursor.h"
 #include "game_state.h"
-#include "../ui.h"
 #include "../units.h"
 #include "../camera.h"
 #include "../gt/input.h"
 #include "unit_selected.h"
-
 
 Unit clickedUnit;
 
@@ -33,13 +31,11 @@ void update_state_cursor_movement(){
     update_cursor();
     update_unit_animation();
     update_unit_cache();
-    update_ui();
 }
 
 void queue_draw_state_cursor_movement(){
     draw_cursor();
     draw_visible_units();
-    draw_ui();
 }
 
 

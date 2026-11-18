@@ -4,8 +4,8 @@
 #include "gt/input.h"
 #include "gt/gfx/draw_queue.h"
 
-void on_cursor_move();
-void query_cursor_move();
+static void on_cursor_move();
+static void query_cursor_move();
 
 #define TILE_SIZE 8
 
@@ -50,13 +50,7 @@ void update_cursor(){
     ++current_sprite_frame_tick;
 
     if(current_sprite_frame_tick == SPRITE_ANIMATION_TICK_FRAMES){
-        if(spriteUse == 0){
-            spriteUse = 1;
-        }
-        else{
-            spriteUse = 0;
-        }
-
+        spriteUse ^= 1;
         current_sprite_frame_tick = 0;
     }
 
@@ -69,7 +63,7 @@ void update_cursor(){
     }
 }
 
-void query_cursor_move(){
+static void query_cursor_move(){
     signed char input_x = 0, input_y = 0;
     signed char cursor_old_x = cursor_tile_position_x;
     signed char cursor_old_y = cursor_tile_position_y;
@@ -128,7 +122,7 @@ void query_cursor_move(){
     }
 }
 
-void on_cursor_move(){
+static void on_cursor_move(){
     int current_x = cursor_tile_position_x - (camera_x / TILE_SIZE);
     int current_y = cursor_tile_position_y - (camera_y / TILE_SIZE);
 
@@ -151,10 +145,5 @@ void on_cursor_move(){
 }
 
 void draw_cursor(){
-    if(spriteUse == 0){
-        queue_draw_sprite((cursor_tile_position_x * TILE_SIZE) - camera_x, (cursor_tile_position_y * TILE_SIZE) - camera_y, 8, 8, 8, 0, *cursorSpritePage);
-    }
-    else{
-        queue_draw_sprite((cursor_tile_position_x  * TILE_SIZE) - camera_x, (cursor_tile_position_y * TILE_SIZE) - camera_y, 8, 8, 16, 0, *cursorSpritePage);
-    }
+    queue_draw_sprite((cursor_tile_position_x * TILE_SIZE) - camera_x, (cursor_tile_position_y * TILE_SIZE) - camera_y, 8, 8, 8, 0, *cursorSpritePage);
 }

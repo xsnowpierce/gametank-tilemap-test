@@ -135,7 +135,7 @@ vector_u8b get_unit_sprite_point(char type){
 char* get_job_name(enum UNIT_JOB job){
     switch(job){
         case SWORDSMAN:
-            return "KNIGHT";
+            return "BLADE";
         case MAGE:
             return "MAGE";
         default:

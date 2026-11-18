@@ -9,6 +9,8 @@ enum GAME_STATE {
 
 extern enum GAME_STATE currentGameState;
 
+extern unsigned char current_map_id;
+
 void do_ram_loading();
 void game_load_map(unsigned char map_id);
 

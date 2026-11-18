@@ -1,6 +1,6 @@
 #ifndef DRAW_DIRECT_H
 #define DRAW_DIRECT_H
-#include "gametank.h"
+#include "../gametank.h"
 #include "gfx_sys.h"
 #include "sprites.h"
 
