@@ -8,27 +8,40 @@ enum TILE {
     TILE_BLACK = 0, TILE_GRASS = 1, TILE_DIRT = 2, TILE_BUSH = 3, TILE_TREE = 4, TILE_WATER = 5
 };
 
-static unsigned char get_tile_from_point(unsigned char map_id, vector_u8b point);
+const unsigned char* get_map_from_id(unsigned char map_id);
 
-static const char * get_tile_name_from_id(unsigned char map_id){
-    switch(map_id){
-        case 0:
+enum TILE get_tile_from_point(unsigned char map_id, vector_u8b point);
+
+static const char * get_tile_name_from_id(enum TILE tile_id){
+    switch(tile_id){
+        case TILE_BLACK:
             return "VOID";
-        case 1:
+        case TILE_GRASS:
             return "GRASS";
-        case 2:
+        case TILE_DIRT:
             return "DIRT";
-        case 3:
+        case TILE_BUSH:
             return "BUSH";
-        case 4:
+        case TILE_TREE:
             return "TREE";
-        case 5:
+        case TILE_WATER:
             return "WATER";
         default:
             return "NULL";
     }
 }
 
-const unsigned char* get_map_from_id(char map_id);
+static const unsigned char get_tile_is_passable(enum TILE tile_id){
+    switch(tile_id){
+        case TILE_BLACK:
+            return 0;
+        case TILE_TREE:
+            return 0;
+        default:
+            return 1;
+    }
+}
+
+
 
 #endif
