@@ -122,6 +122,11 @@ vector_u8b get_unit_sprite_point(char type){
             return_vector.x = 0;
             return_vector.y = 16;
             break;
+        
+        case VAMPIRE:
+            return_vector.x = 0;
+            return_vector.y = 24;
+            break;
 
         default:
             return_vector.x = 0;
@@ -138,6 +143,8 @@ char* get_job_name(enum UNIT_JOB job){
             return "BLADE";
         case MAGE:
             return "MAGE";
+        case VAMPIRE:
+            return "VAMPYR";
         default:
             return "NULL";
     }

@@ -7,13 +7,13 @@
 #include "map/map_drawing.h"
 #include "gt/input.h"
 #include "units.h"
-#include "gt/feature/text/text.h"
 
 #include "state_logic/game_state.h"
 
 Unit unit_bank[MAX_UNIT_COUNT] = {
-    {SWORDSMAN, "JAME", { 1, 1, 1 }, {8, 8}, 0, 1},
-    {MAGE, "CRAS", {1,1,1}, {10, 8}, 0, 1}
+    {SWORDSMAN, "JAMERO", { 1, 1, 1 }, {8, 8}, 0, 1},
+    {MAGE, "CRAS", {1,1,1}, {10, 8}, 0, 1},
+    { VAMPIRE, "DINER", {1, 1, 1}, { 3, 4}, 0, 1}
 };
 
 void start_game(){
@@ -56,9 +56,6 @@ void queued_draw(){
 
 
 int main () {
-    text_init();
-    text_load_font();
-
     start();
     
     while (1) {

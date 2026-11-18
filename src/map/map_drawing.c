@@ -7,9 +7,9 @@
 #include "../gt/gfx/sprites.h"
 #include "../gt/gfx/draw_queue.h"
 #include "map_defs.h"
-
-#include "../gt/banking.h" //Banking API
+#include "../gt/banking.h"
 #include "../gen/bank_nums.h"
+
 
 int load_map_into_gram(unsigned char map_id);
 void load_drawing();
@@ -23,6 +23,16 @@ void draw();
 #define MAP_WIDTH 32
 #define MAP_HEIGHT 32
 
+int load_map_id(unsigned char map_id){
+    push_rom_bank();
+    change_rom_bank(BANK_PROG0);
+
+    load_map_into_gram(map_id);
+
+    pop_rom_bank();
+}
+
+#pragma code-name (push, "PROG0")
 int load_map_into_gram(unsigned char map_id){
     unsigned int chunk_x, chunk_y;
     unsigned int map_x, map_y;
@@ -31,11 +41,6 @@ int load_map_into_gram(unsigned char map_id){
     unsigned char current_quadrant = QUADRANT_3;
     const unsigned char *target_map_level;
     SpriteSlot currentTileset = allocate_sprite(&ASSET__tileset__tileset_bmp_load_list);
-
-
-    // change the rom bank to the map's bank
-    pop_rom_bank();
-    change_rom_bank(BANK_PROG0);
 
     // disable interrupts before we do the heavy function
     __asm__("SEI");
@@ -61,7 +66,7 @@ int load_map_into_gram(unsigned char map_id){
 
                     source_index = (map_y << 5) + map_x;
 
-                    draw_tile_into_gram(x,y,currentTileset, target_map_level[source_index] - 1,current_quadrant | MAP_RAM_BANK);
+                    draw_tile_into_gram(x,y,currentTileset, target_map_level[source_index] ,current_quadrant | MAP_RAM_BANK);
                 }
             }
             current_quadrant -= QUADRANT_1;
@@ -70,11 +75,13 @@ int load_map_into_gram(unsigned char map_id){
     }
 
     __asm__("CLI"); // re-enable interrupts since we are now finished
-    push_rom_bank(); // return to the starting bank
 
     return 0;
 }
+#pragma code-name (pop)
 
+
+#pragma code-name (push, "PROG0")
 void draw_tile_into_gram(unsigned char tile_x, unsigned char tile_y, SpriteSlot source_sprite_slot, unsigned char tile_id, unsigned char target_bank) {
     unsigned char i, j, tile_pixels[TILE_SIZE * TILE_SIZE];
     unsigned int source_x = (tile_id % TILES_PER_ROW) * TILE_SIZE, source_y = (tile_id / TILES_PER_ROW) * TILE_SIZE;
@@ -107,7 +114,7 @@ void draw_tile_into_gram(unsigned char tile_x, unsigned char tile_y, SpriteSlot 
     }
     //PROFILER_END(2);
 }
-
+#pragma code-name (pop)
 
 void draw_level_map(){
     direct_prepare_sprite_mode(QUADRANT_0 | 7);

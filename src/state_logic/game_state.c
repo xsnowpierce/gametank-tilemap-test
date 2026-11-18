@@ -8,14 +8,12 @@ enum GAME_STATE currentGameState = CURSOR_MOVEMENT;
 unsigned char current_map_id;
 
 void do_ram_loading(){
-    // CHANGE THIS LATER
-    // need to convert it to print the text into gram so that the fps isnt tanked when drawing
     uiSpriteSlot = allocate_sprite(&ASSET__ui__uitilesheet_bmp_load_list);
 }
 
 void game_load_map(unsigned char map_id){
     current_map_id = map_id;
-    load_map_into_gram(map_id);
+    load_map_id(map_id);
 }
 
 void change_game_state(enum GAME_STATE targetState){

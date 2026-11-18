@@ -8,7 +8,7 @@
 #define MAX_UNIT_COUNT 18
 
 enum UNIT_JOB {
-    NULL = 0, SWORDSMAN = 1, MAGE = 2
+    NULL = 0, SWORDSMAN = 1, MAGE = 2, VAMPIRE = 3
 };
 
 typedef struct {

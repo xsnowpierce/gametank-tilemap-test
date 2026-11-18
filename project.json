@@ -1,11 +1,11 @@
 {
     "title" : "My GameTank Game",
     "romname" : "game.gtr",
-    "progbanks" : 1,
+    "progbanks" : 2,
     "modules" : [
         "PERSIST",
         "RANDOM",
-        "TEXT",
+        "BITTEXT",
         "DRAWQUEUE",
         "AUDIO_DEFAULT_FM_FIRMWARE",
         "SDK_TRACKER_FM_BACKEND"

@@ -1,5 +1,7 @@
 #include "map_moving.h"
 #include "map_defs.h"
+#include "../gt/banking.h"
+#include "../gen/bank_nums.h"
 
 #define MAP_WIDTH 32
 #define MAP_HEIGHT 32
@@ -26,15 +28,18 @@ unsigned char node_local_y[NODE_COUNT];
 
 vector_u8b start_position;
 
-unsigned char is_tile_passable(unsigned char map_id, unsigned int array_index){
+#pragma code-name (push, "PROG1")
+static unsigned char is_tile_passable(unsigned char map_id, unsigned int array_index){
     if (!node_valid[array_index]) {
         return 0;
     }
 
     return get_tile_is_passable(get_tile_from_point(map_id, node_pos[array_index]));
 }
+#pragma code-name (pop)
 
-void add_node_to_queue(unsigned char map_id, unsigned int node, unsigned char next_distance, unsigned char max_steps, unsigned int *queue_back){
+#pragma code-name (push, "PROG1")
+static void add_node_to_queue(unsigned char map_id, unsigned int node, unsigned char next_distance, unsigned char max_steps, unsigned int *queue_back){
     if (!node_valid[node] || node_distance[node] != UNVISITED_TILE_ID) {
         return;
     }
@@ -51,8 +56,10 @@ void add_node_to_queue(unsigned char map_id, unsigned int node, unsigned char ne
     node_queue[*queue_back] = node;
     ++(*queue_back);
 }
+#pragma code-name (pop)
 
-void find_reachable_tiles(unsigned char map_id, vector_u8b unit_start_position, unsigned char movement_range){
+#pragma code-name (push, "PROG1")
+static void find_reachable_tiles(unsigned char map_id, vector_u8b unit_start_position, unsigned char movement_range){
     unsigned int i;
     unsigned int queue_front, queue_back, start_node;
     unsigned char local_x, local_y;
@@ -126,8 +133,10 @@ void find_reachable_tiles(unsigned char map_id, vector_u8b unit_start_position, 
         }
     }
 }
+#pragma code-name (pop)
 
-unsigned int get_reachable_tiles(vector_u8b *out_tiles){
+#pragma code-name (push, "PROG1")
+static unsigned int get_reachable_tiles(vector_u8b *out_tiles){
     unsigned int i;
     unsigned int count = 0;
 
@@ -140,3 +149,20 @@ unsigned int get_reachable_tiles(vector_u8b *out_tiles){
 
     return count;
 }   
+
+#pragma code-name (pop)
+
+vector_u8b get_unit_reachable_tiles(unsigned char map_id, vector_u8b unit_position, 
+    unsigned char unit_movement_range){
+
+        vector_u8b return_value;
+
+        push_rom_bank();
+        change_rom_bank(BANK_PROG1);
+
+        find_reachable_tiles(map_id, unit_position, unit_movement_range);
+        get_reachable_tiles(&return_value);
+
+        pop_rom_bank();
+        return return_value;
+}
