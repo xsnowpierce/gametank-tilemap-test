@@ -12,6 +12,13 @@ int start_camera_x, start_camera_y;
 unsigned int move_duration;
 unsigned int move_elapsed;
 
+static int camera_step_x, camera_step_y;
+static unsigned char camera_remainder_x, camera_remainder_y;
+static unsigned char camera_error_x, camera_error_y;
+static signed char camera_direction_x, camera_direction_y;
+
+
+
 // idk how any of this is working with these casts but i dont want to touch it
 void move_camera(int dX, int dY){
     int nextX = (int) camera_x + dX;

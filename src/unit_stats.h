@@ -9,11 +9,11 @@ typedef struct {
 } Statistics;
 
 inline unsigned char get_unit_max_health_value(Statistics *unitStats){
-    return (unitStats->strength / 2) + unitStats->stamina;
+    return (unitStats->strength >> 1) + unitStats->stamina;
 }
 
 inline unsigned char get_unit_speed_value(Statistics *unitStats){
-    return (unitStats->stamina / 3) + unitStats->speed;
+    return (unitStats->stamina >> 1) + unitStats->speed;
 }
 
 #endif

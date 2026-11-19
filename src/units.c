@@ -1,4 +1,5 @@
 #include "units.h"
+#include "gt/gfx/draw_direct.h"
 #include "gt/gfx/draw_queue.h"
 #include "camera.h"
 #include "vector.h"
@@ -8,6 +9,8 @@
 
 #define SPRITE_ANIMATION_FRAME_TIME 10
 #define SPRITE_ANIMATION_MAX_FRAME 2
+
+static void draw_unit(Unit *unit, unsigned char spriteFrame);
 
 SpriteSlot *spriteSheet;
 Unit units_array[MAX_UNIT_COUNT];
@@ -27,26 +30,30 @@ void load_units_into_array(Unit units[MAX_UNIT_COUNT]){
     }
 }
 
+/*
 void update_unit_cache(){
-    unsigned char camera_tile_x = camera_x / TILE_SIZE, camera_tile_y = camera_y / TILE_SIZE;
-    unsigned char camera_furthest_right = camera_tile_x + TILES_ON_SCREEN - 1, camera_furthest_down = camera_tile_y + TILES_ON_SCREEN - 1;
+    unsigned char left = camera_x >> 3;
+    unsigned char top = camera_y >> 3;
+    unsigned char right = left + 15;
+    unsigned char bottom = top + 15;
     unsigned char i;
+    return;
 
-    for(i = 0; i < MAX_UNIT_COUNT; ++i){
-        if(units_array[i].unitJob != NULL){
-            
-            // check if the unit is on screen to be rendered
-            if(units_array[i].tile_position.x < camera_tile_x || units_array[i].tile_position.y < camera_tile_y || units_array[i].tile_position.x > camera_furthest_right || units_array[i].tile_position.y > camera_furthest_down){
-                units_array[i].is_on_screen = 0;
-            }
-            else{
-                units_array[i].is_on_screen = 1;
-            }
+    for (i = 0; i < MAX_UNIT_COUNT; ++i) {
+        Unit *unit = &units_array[i];
+
+        if (unit->unitJob == NULL) {
+            unit->is_on_screen = 0;
+            continue;
         }
+
+        unit->is_on_screen = unit->tile_position.x >= left && unit->tile_position.x <= right &&
+            unit->tile_position.y >= top && unit->tile_position.y <= bottom;
     }
 }
+*/
 
-void update_unit_animation() {
+void update_unit_animation(){
     ++current_sprite_animation_counter;
 
     if (current_sprite_animation_counter >= SPRITE_ANIMATION_FRAME_TIME) {
@@ -72,26 +79,47 @@ void update_unit_animation() {
 void draw_visible_units(){
     unsigned char i;
 
-    for(i = 0; i < MAX_UNIT_COUNT; ++i){
+    __asm__("SEI");
+    direct_prepare_sprite_mode(*spriteSheet);
+    for (i = 0; i < MAX_UNIT_COUNT; ++i) {
         draw_unit(&units_array[i], current_sprite_frame_index);
     }
+    __asm__("CLI");
 }
 
-void draw_unit(Unit *unit, char spriteFrame){
-    vector_u8b spritePosition;
-    char animationOffset;
-
-    if(unit->is_on_screen){
-        if(unit->do_animation){
-            animationOffset = spriteFrame * TILE_SIZE;
-        }
-        spritePosition = get_unit_sprite_point(unit->unitJob);
-        queue_draw_sprite((unit->tile_position.x * TILE_SIZE) - camera_x, (unit->tile_position.y * TILE_SIZE) - camera_y, TILE_SIZE, TILE_SIZE, spritePosition.x + animationOffset, spritePosition.y, *spriteSheet);
+void draw_visible_units_at_frame(unsigned char target_frame){
+    unsigned char i;
+    __asm__("SEI");
+    direct_prepare_sprite_mode(*spriteSheet);
+    for (i = 0; i < MAX_UNIT_COUNT; ++i) {
+        draw_unit(&units_array[i], target_frame);
     }
+
+    __asm__("CLI");
 }
 
-int get_unit_on_tile(char tile_x, char tile_y, Unit *return_unit){
-    char i = 0;
+void force_draw_target_unit(Unit *unit){
+    direct_prepare_sprite_mode(*spriteSheet);
+    draw_unit(unit, current_sprite_frame_index);
+}
+
+static void draw_unit(Unit *unit, unsigned char spriteFrame){
+    vector_u8b spritePosition;
+    unsigned char animationOffset = 0;
+
+    if (unit->unitJob == NULL)
+        return;
+
+    if (unit->do_animation)
+        animationOffset = spriteFrame << 3;
+
+    spritePosition = get_unit_sprite_point(unit->unitJob);
+    DIRECT_DRAW_SPRITE((unit->tile_position.x << 3) - camera_x, (unit->tile_position.y << 3) - camera_y, 
+        TILE_SIZE, TILE_SIZE, spritePosition.x + animationOffset, spritePosition.y);
+}
+
+int get_unit_on_tile(unsigned char tile_x, unsigned char tile_y, Unit *return_unit){
+    unsigned char i = 0;
     
     for(i = 0; i < MAX_UNIT_COUNT; ++i){
         if(units_array[i].tile_position.x != tile_x){
@@ -109,7 +137,7 @@ int get_unit_on_tile(char tile_x, char tile_y, Unit *return_unit){
     return 0;
 }
 
-vector_u8b get_unit_sprite_point(char type){
+vector_u8b get_unit_sprite_point(unsigned char type){
     vector_u8b return_vector;
 
     switch(type){
@@ -144,7 +172,7 @@ char* get_job_name(enum UNIT_JOB job){
         case MAGE:
             return "MAGE";
         case VAMPIRE:
-            return "VAMPYR";
+            return "BLOOD";
         default:
             return "NULL";
     }

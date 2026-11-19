@@ -11,7 +11,25 @@
 #define UI_OFFSET_X 1
 #define UI_OFFSET_Y 8
 
-#define TEXT_BANK QUADRANT_3 | 6
+#define TEXT_BANK QUADRANT_3 | 4
+
+// pixel width of font, really
+#define PIXELS_PER_TEXT_CHARACTER 4
+
+// user specified definitions
+#define UNIT_NAME_MAX_CHARACTERS 6
+#define JOB_NAME_MAX_CHARACTERS 9
+#define HEALTH_MAX_CHARACTERS 2
+
+// macros that should be auto defined
+#define UNIT_NAME_PIXEL_WIDTH (UNIT_NAME_MAX_CHARACTERS * PIXELS_PER_TEXT_CHARACTER)
+#define JOB_NAME_PIXEL_WIDTH (JOB_NAME_MAX_CHARACTERS * PIXELS_PER_TEXT_CHARACTER)
+#define HEALTH_PIXEL_WIDTH (HEALTH_MAX_CHARACTERS * PIXELS_PER_TEXT_CHARACTER)
+
+
+enum PROGRESS_STATE { IN_SUMMARY_MENU, MOVING_CURSOR };
+
+enum PROGRESS_STATE currentProgressionState;
 
 //#define PROFILER_START(x) ((char*) 0x2800)[0] = 0x80; ((char*) 0x2800)[0] = x;
 //#define PROFILER_END(x) ((char*) 0x2800)[0] = 0x80; ((char*) 0x2800)[0] = x | 0x40;
@@ -20,7 +38,6 @@ Unit selectedUnit;
 SpriteSlot uiSpriteSlot;
 
 vector_u8b cursor_starting_position;
-unsigned char player_moved_cursor = 0;
 
 vector_u8b unit_reachable_tiles;
 
@@ -33,62 +50,106 @@ void initialize_state_unit_selected(){
     PROFILER_END(3);
     cursor_starting_position.x = cursor_tile_position_x;
     cursor_starting_position.y = cursor_tile_position_y;
-    player_moved_cursor = 0;
 
     
     unit_reachable_tiles = get_unit_reachable_tiles(current_map_id, selectedUnit.tile_position, selectedUnit.unitStats.movementRange);
 
+    currentProgressionState = IN_SUMMARY_MENU;
     //find_reachable_tiles(current_map_id, selectedUnit.tile_position, selectedUnit.unitStats.movementRange);
     //get_reachable_tiles(out_tiles);
 }
 
 void update_state_unit_selected(){
-    if(player_moved_cursor == 0){
+
+    update_cursor();
+    update_unit_animation();
+    
+    if(currentProgressionState == IN_SUMMARY_MENU){
+        // check if cursor has moved from the starting position yet
         if(cursor_tile_position_x != cursor_starting_position.x || cursor_tile_position_y != cursor_starting_position.y){
-            player_moved_cursor = 1;
+            currentProgressionState = MOVING_CURSOR;
         }
     }
     else{
         update_camera();
-        update_cursor();
-        //update_unit_animation();
-        //update_unit_cache();
     }
 }
 
 void queue_draw_state_unit_selected(){
-    draw_visible_units();
-    draw_cursor();
+    // before we draw the visible units:
+    // we should check to see if we are IN_SUMMARY_MENU.
+    // We can set the selected unit to be "invisible" so they will not be drawn.
+    if(currentProgressionState == IN_SUMMARY_MENU){
+        selectedUnit.is_on_screen = 0;
+        draw_visible_units_at_frame(0);
+        force_draw_target_unit(&selectedUnit);
 
-    if(player_moved_cursor == 0){
+        draw_cursor();
         draw_unit_information();
+    }else{
+        draw_cursor();
+        draw_visible_units();
     }
+
+    
 }
 
 void draw_state_unit_selected(){
     
 }
 
+
+
 void print_unit_information_into_gram(){
+    char i;
     // now draw onto this somehow
     direct_prepare_sprite_ram_array_mode(TEXT_BANK);
+    
+    // draw the units name
     bittext_set_x(0);
     bittext_set_y(0);
+    for(i = 0; i < UNIT_NAME_MAX_CHARACTERS; ++i){
+        bittext_draw_char(' ');
+    }
+    bittext_set_x(0);
+    //bittext_set_y(0);
     bittext_write_str(selectedUnit.unitName);
+
+    // draw the job name
+    bittext_set_x(0);
+    bittext_set_y(8);
+    for(i = 0; i < JOB_NAME_MAX_CHARACTERS; ++i){
+        bittext_draw_char(' ');
+    }
+    bittext_set_x(0);
+    //bittext_set_y(8);
+    bittext_write_str(get_job_name(selectedUnit.unitJob));
+
+    // draw the health
+    bittext_set_x(0);
+    bittext_set_y(16);
+    for(i = 0; i < HEALTH_MAX_CHARACTERS; ++i){
+        bittext_draw_char(' ');
+    }
+    bittext_set_x(0);
+    //bittext_set_y(8);
+    bittext_write_str("1");
+    bittext_write_str("2");
+    bittext_write_str("3");
+    bittext_write_str("4");
 }
 
-// pixel width of font, really
-#define PIXELS_PER_TEXT_CHARACTER 4
 
-// user specified definitions
-#define UNIT_NAME_MAX_CHARACTERS 6
-
-// macros that should be auto defined
-#define NAME_PIXEL_WIDTH (UNIT_NAME_MAX_CHARACTERS * PIXELS_PER_TEXT_CHARACTER)
 
 void draw_unit_information(){
     PROFILER_START(1);
+    // TODO: make it so that if the cursor/unit is blocked by the UI area,
+    // render the screen on the right side instead.
     queue_draw_sprite(UI_OFFSET_X, UI_OFFSET_Y, 40, 37, 0, 0, uiSpriteSlot);
-    queue_draw_sprite(UI_OFFSET_X + 3, UI_OFFSET_Y + 3, NAME_PIXEL_WIDTH, 8, 0, 0, TEXT_BANK);
+    queue_draw_sprite(UI_OFFSET_X + 3, UI_OFFSET_Y + 3, UNIT_NAME_PIXEL_WIDTH, 8, 0, 0, TEXT_BANK);
+    queue_draw_sprite(UI_OFFSET_X + 3, UI_OFFSET_Y + 11, JOB_NAME_PIXEL_WIDTH, 8, 0, 8, TEXT_BANK);
+    queue_draw_sprite(UI_OFFSET_X + 14, UI_OFFSET_Y + 26, HEALTH_PIXEL_WIDTH, 8, 0, 16, TEXT_BANK);
+    queue_draw_sprite(UI_OFFSET_X + 28, UI_OFFSET_Y + 26, HEALTH_PIXEL_WIDTH, 8, HEALTH_PIXEL_WIDTH, 16, TEXT_BANK);
+    
     PROFILER_END(1);
 }

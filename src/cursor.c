@@ -123,8 +123,8 @@ static void query_cursor_move(){
 }
 
 static void on_cursor_move(){
-    int current_x = cursor_tile_position_x - (camera_x / TILE_SIZE);
-    int current_y = cursor_tile_position_y - (camera_y / TILE_SIZE);
+    int current_x = cursor_tile_position_x - (camera_x >> 3);
+    int current_y = cursor_tile_position_y - (camera_y >> 3);
 
     signed char target_camera_x = 0, target_camera_y = 0;
 
@@ -145,5 +145,5 @@ static void on_cursor_move(){
 }
 
 void draw_cursor(){
-    queue_draw_sprite((cursor_tile_position_x * TILE_SIZE) - camera_x, (cursor_tile_position_y * TILE_SIZE) - camera_y, 8, 8, 8, 0, *cursorSpritePage);
+    queue_draw_sprite((cursor_tile_position_x << 3) - camera_x, (cursor_tile_position_y << 3) - camera_y, 8, 8, 8, 0, *cursorSpritePage);
 }

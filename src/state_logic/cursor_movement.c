@@ -30,7 +30,6 @@ void update_state_cursor_movement(){
     update_camera();
     update_cursor();
     update_unit_animation();
-    update_unit_cache();
 }
 
 void queue_draw_state_cursor_movement(){

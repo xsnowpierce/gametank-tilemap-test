@@ -84,8 +84,8 @@ int load_map_into_gram(unsigned char map_id){
 #pragma code-name (push, "PROG0")
 void draw_tile_into_gram(unsigned char tile_x, unsigned char tile_y, SpriteSlot source_sprite_slot, unsigned char tile_id, unsigned char target_bank) {
     unsigned char i, j, tile_pixels[TILE_SIZE * TILE_SIZE];
-    unsigned int source_x = (tile_id % TILES_PER_ROW) * TILE_SIZE, source_y = (tile_id / TILES_PER_ROW) * TILE_SIZE;
-    unsigned int target_x = tile_x * TILE_SIZE, target_y = tile_y * TILE_SIZE;
+    unsigned int source_x = (tile_id % TILES_PER_ROW) << 3, source_y = (tile_id / TILES_PER_ROW) << 3;
+    unsigned int target_x = tile_x << 3, target_y = tile_y << 3;
 
     // Grab the sprite we are targetting and store it in tile_pixels.
     // I'm nmot sure if changing the bank all the time is good so lets just grab the entire tile
@@ -94,7 +94,7 @@ void draw_tile_into_gram(unsigned char tile_x, unsigned char tile_y, SpriteSlot 
     direct_prepare_sprite_ram_array_mode(source_sprite_slot);
     for (i = 0; i < TILE_SIZE; ++i) {
         unsigned int source_row = ((source_y + i) << 7) + source_x;
-        unsigned int tile_row = i * TILE_SIZE;
+        unsigned int tile_row = i << 3;
 
         for (j = 0; j < TILE_SIZE; ++j) {
             tile_pixels[tile_row + j] = vram[source_row + j];
@@ -106,7 +106,7 @@ void draw_tile_into_gram(unsigned char tile_x, unsigned char tile_y, SpriteSlot 
     direct_prepare_sprite_ram_array_mode(target_bank);
     for (i = 0; i < TILE_SIZE; ++i) {
         unsigned int target_row = ((target_y + i) << 7) + target_x;
-        unsigned int tile_row = i * TILE_SIZE;
+        unsigned int tile_row = i << 3;
 
         for (j = 0; j < TILE_SIZE; ++j) {
             vram[target_row + j] = tile_pixels[tile_row + j];
