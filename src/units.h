@@ -5,7 +5,7 @@
 #include "unit_stats.h"
 #include "vector.h"
 
-#define MAX_UNIT_COUNT 15
+#define MAX_UNIT_COUNT 30
 
 enum UNIT_JOB {
     NULL = 0, SWORDSMAN = 1, MAGE = 2, VAMPIRE = 3
@@ -16,21 +16,17 @@ typedef struct {
     char* unitName;
     Statistics unitStats;
     vector_u8b tile_position;
-    char is_on_screen;
-    char do_animation;
+    unsigned char currentQuadrant;
 } Unit;
 
 extern Unit units_array[];
 
 void set_unit_spritesheet(SpriteSlot *slot);
 void load_units_into_array(Unit units[MAX_UNIT_COUNT]);
-void update_unit_cache();
+void draw_unit_sprites_into_sram();
 
-void draw_visible_units();
-void draw_visible_units_at_frame(unsigned char target_frame);
-void force_draw_target_unit(Unit *unit);
+void draw_unit_into_sram(Unit *unit);
 
-void update_unit_animation();
 int get_unit_on_tile(unsigned char tile_x, unsigned char tile_y, Unit *return_unit);
 char* get_job_name(enum UNIT_JOB job);
 

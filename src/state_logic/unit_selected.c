@@ -7,6 +7,9 @@
 #include "../camera.h"
 #include "../cursor.h"
 #include "../gt/feature/bittext/bittext.h"
+#include "../map/map_sprite_animation.h"
+#include "../gt/input.h"
+#include "../map/map_tile_helper.h"
 
 #define UI_OFFSET_X 1
 #define UI_OFFSET_Y 8
@@ -28,11 +31,7 @@
 
 
 enum PROGRESS_STATE { IN_SUMMARY_MENU, MOVING_CURSOR };
-
 enum PROGRESS_STATE currentProgressionState;
-
-//#define PROFILER_START(x) ((char*) 0x2800)[0] = 0x80; ((char*) 0x2800)[0] = x;
-//#define PROFILER_END(x) ((char*) 0x2800)[0] = 0x80; ((char*) 0x2800)[0] = x | 0x40;
 
 Unit selectedUnit;
 SpriteSlot uiSpriteSlot;
@@ -45,32 +44,40 @@ void draw_unit_information();
 void print_unit_information_into_gram();
 
 void initialize_state_unit_selected(){
-    PROFILER_START(3);
+    PROFILER_START(1);
     print_unit_information_into_gram();
-    PROFILER_END(3);
+    PROFILER_END(1);
+
     cursor_starting_position.x = cursor_tile_position_x;
     cursor_starting_position.y = cursor_tile_position_y;
-
     
+    PROFILER_START(2);
     unit_reachable_tiles = get_unit_reachable_tiles(current_map_id, selectedUnit.tile_position, selectedUnit.unitStats.movementRange);
+    PROFILER_END(2);
+
+    // now i need to take the unit off of the sram and replace that with a tile.
+    // create a helper for it in maybe a new file to lighten the includes?
+    redraw_tile_in_sram(selectedUnit.tile_position, selectedUnit.currentQuadrant);
+
+    // start drawing unit as a proper sprite, not linked to the tilemap
 
     currentProgressionState = IN_SUMMARY_MENU;
-    //find_reachable_tiles(current_map_id, selectedUnit.tile_position, selectedUnit.unitStats.movementRange);
-    //get_reachable_tiles(out_tiles);
 }
 
 void update_state_unit_selected(){
-
     update_cursor();
-    update_unit_animation();
     
     if(currentProgressionState == IN_SUMMARY_MENU){
         // check if cursor has moved from the starting position yet
-        if(cursor_tile_position_x != cursor_starting_position.x || cursor_tile_position_y != cursor_starting_position.y){
-            currentProgressionState = MOVING_CURSOR;
+        if(player1_buttons & INPUT_MASK_A ||
+            cursor_tile_position_x != cursor_starting_position.x || 
+            cursor_tile_position_y != cursor_starting_position.y){
+            
+                currentProgressionState = MOVING_CURSOR;
         }
     }
     else{
+        update_map_sprite_animation();
         update_camera();
     }
 }
@@ -80,25 +87,16 @@ void queue_draw_state_unit_selected(){
     // we should check to see if we are IN_SUMMARY_MENU.
     // We can set the selected unit to be "invisible" so they will not be drawn.
     if(currentProgressionState == IN_SUMMARY_MENU){
-        selectedUnit.is_on_screen = 0;
-        draw_visible_units_at_frame(0);
-        force_draw_target_unit(&selectedUnit);
-
         draw_cursor();
         draw_unit_information();
     }else{
         draw_cursor();
-        draw_visible_units();
     }
-
-    
 }
 
 void draw_state_unit_selected(){
     
 }
-
-
 
 void print_unit_information_into_gram(){
     char i;

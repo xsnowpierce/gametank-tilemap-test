@@ -5,6 +5,7 @@
 #include "../camera.h"
 #include "../gt/input.h"
 #include "unit_selected.h"
+#include "../map/map_sprite_animation.h"
 
 Unit clickedUnit;
 
@@ -29,12 +30,13 @@ void update_state_cursor_movement(){
     }
     update_camera();
     update_cursor();
-    update_unit_animation();
+    update_map_sprite_animation();
+    //update_unit_animation();
 }
 
 void queue_draw_state_cursor_movement(){
     draw_cursor();
-    draw_visible_units();
+    //draw_visible_units();
 }
 
 

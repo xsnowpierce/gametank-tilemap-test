@@ -9,11 +9,11 @@
 #include "map_defs.h"
 #include "../gt/banking.h"
 #include "../gen/bank_nums.h"
-
+#include "map_sprite_animation.h"
 
 int load_map_into_gram(unsigned char map_id);
 void load_drawing();
-void draw_tile_into_gram(unsigned char tile_x, unsigned char tile_y, SpriteSlot source_sprite_slot, unsigned char tile_id, unsigned char target_bank);
+void draw_tile_into_gram(unsigned char tile_x, unsigned char tile_y, unsigned char tile_id, unsigned char target_bank);
 void draw();
 
 #define TILE_SIZE 8
@@ -22,6 +22,9 @@ void draw();
 #define MAP_RAM_BANK 7
 #define MAP_WIDTH 32
 #define MAP_HEIGHT 32
+
+SpriteSlot currentTileset;
+const unsigned char *target_map_level;
 
 int load_map_id(unsigned char map_id){
     push_rom_bank();
@@ -39,8 +42,8 @@ int load_map_into_gram(unsigned char map_id){
     unsigned int source_index;
     unsigned char x, y;
     unsigned char current_quadrant = QUADRANT_3;
-    const unsigned char *target_map_level;
-    SpriteSlot currentTileset = allocate_sprite(&ASSET__tileset__tileset_bmp_load_list);
+    
+    currentTileset = allocate_sprite(&ASSET__tileset__tileset_bmp_load_list);
 
     // disable interrupts before we do the heavy function
     __asm__("SEI");
@@ -66,7 +69,7 @@ int load_map_into_gram(unsigned char map_id){
 
                     source_index = (map_y << 5) + map_x;
 
-                    draw_tile_into_gram(x,y,currentTileset, target_map_level[source_index] ,current_quadrant | MAP_RAM_BANK);
+                    draw_tile_into_gram(x,y, target_map_level[source_index] ,current_quadrant);
                 }
             }
             current_quadrant -= QUADRANT_1;
@@ -82,16 +85,17 @@ int load_map_into_gram(unsigned char map_id){
 
 
 #pragma code-name (push, "PROG0")
-void draw_tile_into_gram(unsigned char tile_x, unsigned char tile_y, SpriteSlot source_sprite_slot, unsigned char tile_id, unsigned char target_bank) {
-    unsigned char i, j, tile_pixels[TILE_SIZE * TILE_SIZE];
-    unsigned int source_x = (tile_id % TILES_PER_ROW) << 3, source_y = (tile_id / TILES_PER_ROW) << 3;
+void draw_tile_into_gram(unsigned char tile_x, unsigned char tile_y, unsigned char tile_id, unsigned char target_quadrant) {
+    static const unsigned char banks[] = { 7, 6, 5 };
+    unsigned char b, i, j, tile_pixels[TILE_SIZE << 3];
+    unsigned int source_x = (tile_id % TILES_PER_ROW) << 3, source_y = (tile_id >> 3) << 3;
     unsigned int target_x = tile_x << 3, target_y = tile_y << 3;
 
     // Grab the sprite we are targetting and store it in tile_pixels.
     // I'm nmot sure if changing the bank all the time is good so lets just grab the entire tile
     // in one go and then draw it afterwards
     //PROFILER_START(1);
-    direct_prepare_sprite_ram_array_mode(source_sprite_slot);
+    direct_prepare_sprite_ram_array_mode(currentTileset);
     for (i = 0; i < TILE_SIZE; ++i) {
         unsigned int source_row = ((source_y + i) << 7) + source_x;
         unsigned int tile_row = i << 3;
@@ -103,21 +107,31 @@ void draw_tile_into_gram(unsigned char tile_x, unsigned char tile_y, SpriteSlot 
     //PROFILER_END(1);
     //PROFILER_START(2);
     // Now take the pixel array of the last step and draw it at the target destination
-    direct_prepare_sprite_ram_array_mode(target_bank);
-    for (i = 0; i < TILE_SIZE; ++i) {
-        unsigned int target_row = ((target_y + i) << 7) + target_x;
-        unsigned int tile_row = i << 3;
+    
 
-        for (j = 0; j < TILE_SIZE; ++j) {
-            vram[target_row + j] = tile_pixels[tile_row + j];
+    for (b = 0; b < sizeof banks; ++b) {
+        direct_prepare_sprite_ram_array_mode(target_quadrant | banks[b]);
+
+        for (i = 0; i < TILE_SIZE; ++i) {
+            unsigned int target_row = ((target_y + i) << 7) + target_x;
+            unsigned int tile_row = i << 3;
+
+            for (j = 0; j < TILE_SIZE; ++j) {
+                vram[target_row + j] = tile_pixels[tile_row + j];
+            }
         }
     }
-    //PROFILER_END(2);
+}
+#pragma code-name (pop)
+
+#pragma code-name(push, "PROG0")
+void redraw_tile(unsigned char tile_x, unsigned char tile_y, unsigned char target_quadrant){
+    draw_tile_into_gram(tile_x, tile_y, target_map_level[(tile_x << 5) + tile_y], target_quadrant);
 }
 #pragma code-name (pop)
 
 void draw_level_map(){
-    direct_prepare_sprite_mode(QUADRANT_0 | 7);
+    direct_prepare_sprite_mode(QUADRANT_0 | current_animated_bank);
     DIRECT_DRAW_SPRITE(0, 0, 127, 127, 128 + camera_x, 128 + camera_y);
     await_drawing();
 }

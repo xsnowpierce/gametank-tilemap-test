@@ -12,15 +12,19 @@
 char bittext_color = 7;
 char bittext_bg = 32;
 
-void bittext_write_str(char* c) {
+extern char bittext_x;
+
+char bittext_write_str(char* c) {
+    char oldx = bittext_x;
     push_rom_bank();
     change_rom_bank(BANK_sdk_default);
     while(*c != 0) {
-        //PROFILER_START(0);
+        PROFILER_START(0);
         bittext_draw_char(*c);
-        //PROFILER_END(0);
+        PROFILER_END(0);
         ++c;
     }
     pop_rom_bank();
+    return bittext_x - oldx;
 }
 #endif
