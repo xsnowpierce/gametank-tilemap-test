@@ -253,5 +253,9 @@ static void on_cursor_move(){
 }
 
 void draw_cursor(){
-    queue_draw_sprite((cursor_tile_position_x << 3) - camera_x, (cursor_tile_position_y << 3) - camera_y, 8, 8, 8, 0, *cursorSpritePage);
+    queue_draw_sprite((cursor_tile_position_x << 3) - camera_x, (cursor_tile_position_y << 3) - camera_y, 8, 8, 8 + (spriteUse << 3), 0, *cursorSpritePage);
+}
+
+void draw_cursor_selecting(){
+    queue_draw_sprite((cursor_tile_position_x << 3) - camera_x, (cursor_tile_position_y << 3) - camera_y, 8, 8, 8 + (spriteUse << 3) + 16, 0, *cursorSpritePage);
 }

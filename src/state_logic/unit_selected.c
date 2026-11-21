@@ -67,6 +67,7 @@ void initialize_state_unit_selected(){
 
 void update_state_unit_selected(){
     update_cursor();
+    update_cursor();
     
     if(currentProgressionState == IN_SUMMARY_MENU){
         // check if cursor has moved from the starting position yet
@@ -86,10 +87,10 @@ void queue_draw_state_unit_selected(){
     // we should check to see if we are IN_SUMMARY_MENU.
     // We can set the selected unit to be "invisible" so they will not be drawn.
     if(currentProgressionState == IN_SUMMARY_MENU){
-        draw_cursor();
+        draw_cursor_selecting();
         draw_unit_information();
     }else{
-        draw_cursor();
+        draw_cursor_selecting();
     }
 }
 
