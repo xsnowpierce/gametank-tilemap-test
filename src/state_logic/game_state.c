@@ -17,8 +17,8 @@ void game_load_map(unsigned char map_id){
 }
 
 void change_game_state(enum GAME_STATE targetState){
-    initialize_game_state(targetState);
     currentGameState = targetState;
+    initialize_game_state(targetState);
 }
 
 void initialize_game_state(enum GAME_STATE targetState){

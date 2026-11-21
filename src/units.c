@@ -192,20 +192,20 @@ void draw_unit_into_sram(Unit *unit){
 //     draw_unit(unit, current_sprite_frame_index);
 // }
 
-// static void draw_unit(Unit *unit, unsigned char spriteFrame){
-//     vector_u8b spritePosition;
-//     unsigned char animationOffset = 0;
+void direct_draw_unit(Unit *unit, unsigned char spriteFrame){
+    vector_u8b spritePosition;
+    unsigned char animationOffset = 0;
 
-//     if (unit->unitJob == NULL)
-//         return;
+    if (unit->unitJob == NULL)
+        return;
 
-//     if (unit->do_animation)
-//         animationOffset = spriteFrame << 3;
+    animationOffset = spriteFrame << 3;
 
-//     spritePosition = get_unit_sprite_point(unit->unitJob);
-//     DIRECT_DRAW_SPRITE((unit->tile_position.x << 3) - camera_x, (unit->tile_position.y << 3) - camera_y, 
-//         TILE_SIZE, TILE_SIZE, spritePosition.x + animationOffset, spritePosition.y);
-// }
+    spritePosition = get_unit_sprite_point(unit->unitJob);
+    direct_prepare_sprite_mode(*spriteSheet);
+    DIRECT_DRAW_SPRITE((unit->tile_position.x << 3) - camera_x, (unit->tile_position.y << 3) - camera_y, 
+        TILE_SIZE, TILE_SIZE, spritePosition.x + animationOffset, spritePosition.y);
+}
 
 int get_unit_on_tile(unsigned char tile_x, unsigned char tile_y, Unit *return_unit){
     unsigned char i = 0;

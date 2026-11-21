@@ -51,15 +51,19 @@ static signed char move_axis(signed char position, signed char input, unsigned c
 }
 
 void update_cursor(){
+    update_cursor_animation();
+
+    if(current_input_frame_delay > 0){
+        --current_input_frame_delay;
+    }
+}
+
+void update_cursor_animation(){
     ++current_sprite_frame_tick;
 
     if(current_sprite_frame_tick == SPRITE_ANIMATION_TICK_FRAMES){
         spriteUse ^= 1;
         current_sprite_frame_tick = 0;
-    }
-
-    if(current_input_frame_delay > 0){
-        --current_input_frame_delay;
     }
 }
 

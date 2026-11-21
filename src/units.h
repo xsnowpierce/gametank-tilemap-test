@@ -26,6 +26,7 @@ void load_units_into_array(Unit units[MAX_UNIT_COUNT]);
 void draw_unit_sprites_into_sram();
 
 void draw_unit_into_sram(Unit *unit);
+void direct_draw_unit(Unit *unit, unsigned char spriteFrame);
 
 int get_unit_on_tile(unsigned char tile_x, unsigned char tile_y, Unit *return_unit);
 char* get_job_name(enum UNIT_JOB job);

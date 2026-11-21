@@ -10,6 +10,7 @@
 #include "../map/map_sprite_animation.h"
 #include "../gt/input.h"
 #include "../map/map_tile_helper.h"
+#include "../gt/gfx/draw_queue.h"
 
 #define UI_OFFSET_X 1
 #define UI_OFFSET_Y 8
@@ -33,7 +34,7 @@
 enum PROGRESS_STATE { IN_SUMMARY_MENU, MOVING_CURSOR };
 enum PROGRESS_STATE currentProgressionState;
 
-Unit selectedUnit;
+Unit *selectedUnit;
 SpriteSlot uiSpriteSlot;
 
 vector_u8b cursor_starting_position;
@@ -42,7 +43,9 @@ vector_u8b unit_reachable_tiles;
 unsigned char unit_reachable_tiles_count;
 
 void draw_unit_information();
+void queue_draw_selected_unit();
 void print_unit_information_into_gram();
+void cancel_selecting_unit();
 
 void initialize_state_unit_selected(){
     PROFILER_START(1);
@@ -53,12 +56,12 @@ void initialize_state_unit_selected(){
     cursor_starting_position.y = cursor_tile_position_y;
     
     PROFILER_START(2);
-    unit_reachable_tiles_count = get_unit_reachable_tiles(current_map_id, selectedUnit.tile_position, selectedUnit.unitStats.movementRange, &unit_reachable_tiles);
+    unit_reachable_tiles_count = get_unit_reachable_tiles(current_map_id, selectedUnit->tile_position, selectedUnit->unitStats.movementRange, &unit_reachable_tiles);
     PROFILER_END(2);
 
     // now i need to take the unit off of the sram and replace that with a tile.
     // create a helper for it in maybe a new file to lighten the includes?
-    redraw_tile_in_sram(selectedUnit.tile_position, selectedUnit.currentQuadrant);
+    redraw_tile_in_sram(selectedUnit->tile_position, selectedUnit->currentQuadrant);
 
     // start drawing unit as a proper sprite, not linked to the tilemap
 
@@ -66,11 +69,16 @@ void initialize_state_unit_selected(){
 }
 
 void update_state_unit_selected(){
+    if(player1_buttons & INPUT_MASK_B){
+        // cancel out of menu
+        cancel_selecting_unit();
+        return;
+    }
     update_cursor();
-    update_cursor();
+    update_cursor_animation();
     
     if(currentProgressionState == IN_SUMMARY_MENU){
-        // check if cursor has moved from the starting position yet
+        // if player moves the cursor then exit the menu
         if(player1_buttons & INPUT_MASK_A || player1_buttons & INPUT_MASK_ANY_DIRECTION){
             currentProgressionState = MOVING_CURSOR;
         }
@@ -78,14 +86,21 @@ void update_state_unit_selected(){
     else{
         update_map_sprite_animation();
         update_camera();
-        cursor_update_locked_movement(&unit_reachable_tiles, unit_reachable_tiles_count, selectedUnit.tile_position);
+        cursor_update_locked_movement(&unit_reachable_tiles, unit_reachable_tiles_count, selectedUnit->tile_position);
+    
+        if(player1_buttons & INPUT_MASK_B){
+            // cancel out of menu
+            cancel_selecting_unit();
+        }
     }
 }
 
 void queue_draw_state_unit_selected(){
-    // before we draw the visible units:
-    // we should check to see if we are IN_SUMMARY_MENU.
-    // We can set the selected unit to be "invisible" so they will not be drawn.
+    // draw the unit as a queued sprite since they are selected
+    
+    //.//await_drawing();
+
+    // now draw everything else
     if(currentProgressionState == IN_SUMMARY_MENU){
         draw_cursor_selecting();
         draw_unit_information();
@@ -95,7 +110,8 @@ void queue_draw_state_unit_selected(){
 }
 
 void draw_state_unit_selected(){
-    
+    direct_draw_unit(selectedUnit, 3);
+    await_drawing();
 }
 
 void print_unit_information_into_gram(){
@@ -111,7 +127,7 @@ void print_unit_information_into_gram(){
     }
     bittext_set_x(0);
     //bittext_set_y(0);
-    bittext_write_str(selectedUnit.unitName);
+    bittext_write_str(selectedUnit->unitName);
 
     // draw the job name
     bittext_set_x(0);
@@ -121,7 +137,7 @@ void print_unit_information_into_gram(){
     }
     bittext_set_x(0);
     //bittext_set_y(8);
-    bittext_write_str(get_job_name(selectedUnit.unitJob));
+    bittext_write_str(get_job_name(selectedUnit->unitJob));
 
     // draw the health
     bittext_set_x(0);
@@ -137,8 +153,6 @@ void print_unit_information_into_gram(){
     bittext_write_str("4");
 }
 
-
-
 void draw_unit_information(){
     PROFILER_START(1);
     // TODO: make it so that if the cursor/unit is blocked by the UI area,
@@ -150,4 +164,12 @@ void draw_unit_information(){
     queue_draw_sprite(UI_OFFSET_X + 28, UI_OFFSET_Y + 26, HEALTH_PIXEL_WIDTH, 8, HEALTH_PIXEL_WIDTH, 16, TEXT_BANK);
     
     PROFILER_END(1);
+}
+
+void cancel_selecting_unit(){
+    redraw_unit_in_sram(selectedUnit);
+    cursor_tile_position_x = cursor_starting_position.x;
+    cursor_tile_position_y = cursor_starting_position.y;
+    currentProgressionState = IN_SUMMARY_MENU;
+    change_game_state(CURSOR_MOVEMENT);
 }

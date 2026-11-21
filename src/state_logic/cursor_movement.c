@@ -22,23 +22,20 @@ void update_state_cursor_movement(){
         cursorClickResult = get_unit_on_tile(cursor_tile_position_x, cursor_tile_position_y, &clickedUnit);
         if(cursorClickResult){
             // we clicked on a unit!
-            selectedUnit = clickedUnit;
+            selectedUnit = &clickedUnit;
             change_game_state(SELECTING_UNIT);
-            
+            return;
         }
-        return;
     }
     update_camera();
     
     update_cursor();
     cursor_update_free_movement();
     update_map_sprite_animation();
-    //update_unit_animation();
 }
 
 void queue_draw_state_cursor_movement(){
     draw_cursor();
-    //draw_visible_units();
 }
 
 
