@@ -29,7 +29,9 @@ void update_state_cursor_movement(){
         return;
     }
     update_camera();
+    
     update_cursor();
+    cursor_update_free_movement();
     update_map_sprite_animation();
     //update_unit_animation();
 }

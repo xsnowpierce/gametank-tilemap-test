@@ -152,17 +152,16 @@ static unsigned int get_reachable_tiles(vector_u8b *out_tiles){
 
 #pragma code-name (pop)
 
-vector_u8b get_unit_reachable_tiles(unsigned char map_id, vector_u8b unit_position, 
-    unsigned char unit_movement_range){
-
-        vector_u8b return_value;
+unsigned char get_unit_reachable_tiles(unsigned char map_id, vector_u8b unit_position, 
+    unsigned char unit_movement_range, vector_u8b *out){
+        unsigned char value = 0;
 
         push_rom_bank();
         change_rom_bank(BANK_PROG1);
 
         find_reachable_tiles(map_id, unit_position, unit_movement_range);
-        get_reachable_tiles(&return_value);
+        value = get_reachable_tiles(out);
 
         pop_rom_bank();
-        return return_value;
+        return value;
 }

@@ -9,6 +9,8 @@ extern unsigned char cursor_tile_position_x, cursor_tile_position_y;
 
 void initialize_cursor(SpriteSlot *slot);
 void update_cursor();
+void cursor_update_free_movement();
+void cursor_update_locked_movement(vector_u8b *moveable_tiles, unsigned char moveable_tile_count, vector_u8b unit_position);
 void draw_cursor();
 
 

@@ -39,6 +39,7 @@ SpriteSlot uiSpriteSlot;
 vector_u8b cursor_starting_position;
 
 vector_u8b unit_reachable_tiles;
+unsigned char unit_reachable_tiles_count;
 
 void draw_unit_information();
 void print_unit_information_into_gram();
@@ -52,7 +53,7 @@ void initialize_state_unit_selected(){
     cursor_starting_position.y = cursor_tile_position_y;
     
     PROFILER_START(2);
-    unit_reachable_tiles = get_unit_reachable_tiles(current_map_id, selectedUnit.tile_position, selectedUnit.unitStats.movementRange);
+    unit_reachable_tiles_count = get_unit_reachable_tiles(current_map_id, selectedUnit.tile_position, selectedUnit.unitStats.movementRange, &unit_reachable_tiles);
     PROFILER_END(2);
 
     // now i need to take the unit off of the sram and replace that with a tile.
@@ -69,16 +70,14 @@ void update_state_unit_selected(){
     
     if(currentProgressionState == IN_SUMMARY_MENU){
         // check if cursor has moved from the starting position yet
-        if(player1_buttons & INPUT_MASK_A ||
-            cursor_tile_position_x != cursor_starting_position.x || 
-            cursor_tile_position_y != cursor_starting_position.y){
-            
-                currentProgressionState = MOVING_CURSOR;
+        if(player1_buttons & INPUT_MASK_A || player1_buttons & INPUT_MASK_ANY_DIRECTION){
+            currentProgressionState = MOVING_CURSOR;
         }
     }
     else{
         update_map_sprite_animation();
         update_camera();
+        cursor_update_locked_movement(&unit_reachable_tiles, unit_reachable_tiles_count, selectedUnit.tile_position);
     }
 }
 
