@@ -96,6 +96,7 @@ static void find_reachable_tiles(unsigned char map_id, vector_u8b unit_start_pos
     ++queue_back;
 
     while (queue_front < queue_back) {
+        unsigned char is_passable;
         unsigned int node, next_distance, x, y;
 
         node = node_queue[queue_front];
@@ -131,7 +132,7 @@ static unsigned int get_reachable_tiles(vector_u8b *out_tiles){
     unsigned int count = 0;
 
     for (i = 0; i < NODE_COUNT; ++i) {
-        if (node_valid[i] && node_distance[i] != UNVISITED_TILE_ID && (node_pos[i].x != start_position.x || node_pos[i].y != start_position.y)) {
+        if (node_valid[i] && node_distance[i] != UNVISITED_TILE_ID) {
             out_tiles[count] = node_pos[i];
             ++count;
         }

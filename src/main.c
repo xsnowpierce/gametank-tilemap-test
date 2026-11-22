@@ -1,4 +1,3 @@
-#include "cursor.h"
 #include "gen/assets/player.h"
 #include "gt/gfx/draw_queue.h"
 #include "gt/gfx/gfx_sys.h"
@@ -6,7 +5,6 @@
 
 #include "map/map_drawing.h"
 #include "gt/input.h"
-#include "units.h"
 
 #include "state_logic/game_state.h"
 
@@ -20,8 +18,8 @@ void start_game(){
     playerSpriteSlot = allocate_sprite(&ASSET__player__player_bmp_load_list);
 
     // hard coding the bank position so no weird stuff happens
-    initialize_cursor(SPRITE_BANK_POSITION);
-    set_unit_spriteBank(SPRITE_BANK_POSITION);
+    //initialize_cursor(SPRITE_BANK_POSITION);
+    //set_unit_spriteBank(SPRITE_BANK_POSITION);
     
     do_ram_loading();
     game_load_map(0);

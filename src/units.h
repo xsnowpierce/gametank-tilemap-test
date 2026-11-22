@@ -19,7 +19,6 @@ typedef struct {
     unsigned char currentQuadrant;
 } Unit;
 
-void set_unit_spriteBank(unsigned char spriteSheetBank);
 void draw_unit_sprites_into_sram(Unit* unit_array, unsigned char array_size);
 
 void draw_unit_into_sram(Unit *unit);

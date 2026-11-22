@@ -11,6 +11,7 @@
 #include "../gt/input.h"
 #include "../map/map_tile_helper.h"
 #include "../gt/gfx/draw_queue.h"
+#include "../map/map_defs.h"
 
 #define UI_OFFSET_X 1
 #define UI_OFFSET_Y 8
@@ -33,6 +34,8 @@
 
 enum PROGRESS_STATE { IN_SUMMARY_MENU, MOVING_CURSOR };
 enum PROGRESS_STATE currentProgressionState;
+
+enum TILE currentHoveredTile = TILE_BLACK;
 
 Unit *selectedUnit;
 SpriteSlot uiSpriteSlot;
@@ -69,6 +72,8 @@ void initialize_state_unit_selected(){
 }
 
 void update_state_unit_selected(){
+    vector_u8b cursor_pos;
+
     if(player1_buttons & INPUT_MASK_B){
         // cancel out of menu
         cancel_selecting_unit();
@@ -87,7 +92,12 @@ void update_state_unit_selected(){
         update_map_sprite_animation();
         update_camera();
         cursor_update_locked_movement(&unit_reachable_tiles, unit_reachable_tiles_count, selectedUnit->tile_position);
+        
     }
+
+    cursor_pos.x = cursor_tile_position_x;
+    cursor_pos.y = cursor_tile_position_y;
+    currentHoveredTile = get_tile_from_point(0, cursor_pos);
 }
 
 void queue_draw_state_unit_selected(){

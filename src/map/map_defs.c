@@ -20,9 +20,10 @@ const unsigned char* get_map_from_id(unsigned char map_id){
 enum TILE get_tile_from_point(unsigned char map_id, vector_u8b point){
     unsigned char return_value;
 
-    return_value = get_map_from_id(map_id)[(point.y << 5) + point.x] - 1;
-    
-    //level->TILE_DATA[point.y * level->MAP_WIDTH + point.x];
+    push_rom_bank();
+    change_rom_bank(BANK_PROG0);
+    return_value = game_level_array[map_id][((point.y << 5) + point.x)];
+    pop_rom_bank();
 
     return return_value;
 }
@@ -61,6 +62,8 @@ unsigned char get_tile_is_passable(enum TILE tile_id){
         case TILE_TREE:
             return 0;
         case TILE_MOUNTAIN:
+            return 0;
+        case TILE_WATER:
             return 0;
         default:
             return 1;

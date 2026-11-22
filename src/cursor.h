@@ -5,7 +5,6 @@
 
 extern unsigned char cursor_tile_position_x, cursor_tile_position_y;
 
-void initialize_cursor(unsigned char bank);
 void update_cursor();
 void update_cursor_animation();
 void cursor_update_free_movement();

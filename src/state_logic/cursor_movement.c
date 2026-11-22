@@ -7,12 +7,17 @@
 #include "unit_selected.h"
 #include "../map/map_sprite_animation.h"
 
+#include "../map/map_defs.h"
+
+enum TILE cm_currentHoveredTile = TILE_BLACK;
+
 void initialize_state_cursor_movement(){
 
 }
 
 void update_state_cursor_movement(){
     unsigned char i;
+    vector_u8b cursor_pos;
 
     if(player1_buttons & INPUT_MASK_A){
         // player pressed A, check if there is a unit on this tile
@@ -33,6 +38,10 @@ void update_state_cursor_movement(){
     update_cursor();
     cursor_update_free_movement();
     update_map_sprite_animation();
+
+    cursor_pos.x = cursor_tile_position_x;
+    cursor_pos.y = cursor_tile_position_y;
+    cm_currentHoveredTile = get_tile_from_point(0, cursor_pos);
 }
 
 void queue_draw_state_cursor_movement(){
