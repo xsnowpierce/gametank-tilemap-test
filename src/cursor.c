@@ -24,7 +24,7 @@ static void query_locked_movement(vector_u8b *moveable_tiles, unsigned char move
 #define FIRST_MOVEMENT_TICK_DELAY 15
 
 unsigned char cursor_tile_position_x = CURSOR_MINIMUM_TILE_X, cursor_tile_position_y = CURSOR_MINIMUM_TILE_Y;
-SpriteSlot *cursorSpritePage;
+unsigned char cursorSpriteBank;
 
 unsigned char current_input_frame_delay = 0;
 unsigned char current_sprite_frame_tick = 0;
@@ -33,8 +33,8 @@ unsigned char spriteUse = 0;
 char is_holding_movement = 0;
 char current_holding_movement_delay = 0;
 
-void initialize_cursor(SpriteSlot *slot){
-    cursorSpritePage = slot;
+void initialize_cursor(unsigned char bank){
+    cursorSpriteBank = bank;
 }
 
 static signed char move_axis(signed char position, signed char input, unsigned char minimum, unsigned char maximum){
@@ -257,9 +257,9 @@ static void on_cursor_move(){
 }
 
 void draw_cursor(){
-    queue_draw_sprite((cursor_tile_position_x << 3) - camera_x, (cursor_tile_position_y << 3) - camera_y, 8, 8, 8 + (spriteUse << 3), 0, *cursorSpritePage);
+    queue_draw_sprite((cursor_tile_position_x << 3) - camera_x, (cursor_tile_position_y << 3) - camera_y, 8, 8, 8 + (spriteUse << 3), 0, cursorSpritePage);
 }
 
 void draw_cursor_selecting(){
-    queue_draw_sprite((cursor_tile_position_x << 3) - camera_x, (cursor_tile_position_y << 3) - camera_y, 8, 8, 8 + (spriteUse << 3) + 16, 0, *cursorSpritePage);
+    queue_draw_sprite((cursor_tile_position_x << 3) - camera_x, (cursor_tile_position_y << 3) - camera_y, 8, 8, 8 + (spriteUse << 3) + 16, 0, cursorSpritePage);
 }

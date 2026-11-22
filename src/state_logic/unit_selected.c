@@ -87,11 +87,6 @@ void update_state_unit_selected(){
         update_map_sprite_animation();
         update_camera();
         cursor_update_locked_movement(&unit_reachable_tiles, unit_reachable_tiles_count, selectedUnit->tile_position);
-    
-        if(player1_buttons & INPUT_MASK_B){
-            // cancel out of menu
-            cancel_selecting_unit();
-        }
     }
 }
 

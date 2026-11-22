@@ -29,22 +29,12 @@ unsigned char node_local_y[NODE_COUNT];
 vector_u8b start_position;
 
 #pragma code-name (push, "PROG1")
-static unsigned char is_tile_passable(unsigned char map_id, unsigned int array_index){
-    if (!node_valid[array_index]) {
-        return 0;
-    }
-
-    return get_tile_is_passable(get_tile_from_point(map_id, node_pos[array_index]));
-}
-#pragma code-name (pop)
-
-#pragma code-name (push, "PROG1")
 static void add_node_to_queue(unsigned char map_id, unsigned int node, unsigned char next_distance, unsigned char max_steps, unsigned int *queue_back){
     if (!node_valid[node] || node_distance[node] != UNVISITED_TILE_ID) {
         return;
     }
 
-    if (!is_tile_passable(map_id, node)) {
+    if (!get_tile_is_passable(get_tile_from_point(map_id, node_pos[node]))) {
         return;
     }
 

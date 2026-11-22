@@ -3,12 +3,9 @@
 
 #define MAP_COUNT 1
 #define MAP_MAX_TILE_SIZE 1024
-#define MAP_WIDTH 32
-#define MAP_HEIGHT 32
 
 #pragma rodata-name (push, "PROG0")
-
-static const unsigned char game_level_array[MAP_COUNT][MAP_MAX_TILE_SIZE] = {
+const unsigned char game_level_array[MAP_COUNT][MAP_MAX_TILE_SIZE] = {
     {
 5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
 5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
@@ -44,7 +41,7 @@ static const unsigned char game_level_array[MAP_COUNT][MAP_MAX_TILE_SIZE] = {
 5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5
     }
 };
-
 #pragma rodata-name (pop)
+
 
 #endif

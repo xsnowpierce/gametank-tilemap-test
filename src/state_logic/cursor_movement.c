@@ -7,24 +7,25 @@
 #include "unit_selected.h"
 #include "../map/map_sprite_animation.h"
 
-Unit clickedUnit;
-
 void initialize_state_cursor_movement(){
 
 }
 
 void update_state_cursor_movement(){
-    char cursorClickResult = 0;
+    unsigned char i;
 
     if(player1_buttons & INPUT_MASK_A){
         // player pressed A, check if there is a unit on this tile
         // if there is, keep track of the unit, and change current game state
-        cursorClickResult = get_unit_on_tile(cursor_tile_position_x, cursor_tile_position_y, &clickedUnit);
-        if(cursorClickResult){
-            // we clicked on a unit!
-            selectedUnit = &clickedUnit;
-            change_game_state(SELECTING_UNIT);
-            return;
+
+        for(i = 0; i < MAX_UNIT_COUNT; ++i){
+            if(unit_array[i].tile_position.x == cursor_tile_position_x && unit_array[i].tile_position.y == cursor_tile_position_y){
+                if(unit_array[i].unitJob != NULL){
+                    selectedUnit = &unit_array[i];
+                    change_game_state(SELECTING_UNIT);
+                    return; 
+                }
+            }
         }
     }
     update_camera();

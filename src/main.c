@@ -10,41 +10,21 @@
 
 #include "state_logic/game_state.h"
 
-Unit unit_bank[MAX_UNIT_COUNT] = {
-    {SWORDSMAN, "JAMERO", { 1, 1, 1, 4 }, {8, 8}},
-    {MAGE, "CRAS", {1,1,1, 4}, {10, 8}},
-    {MAGE, "CRAS", {1,1,1, 4}, {11, 8}},
-    {MAGE, "CRAS", {1,1,1, 4}, {10, 9}},
-    {MAGE, "CRAS", {1,1,1, 4}, {10, 10}},
-    {MAGE, "CRAS", {1,1,1, 4}, {10, 12}},
-    {MAGE, "CRAS", {1,1,1, 4}, {15, 8}},
-    {MAGE, "CRAS", {1,1,1, 4}, {14, 10}},
-    {MAGE, "CRAS", {1,1,1, 4}, {17, 17}},
-    {MAGE, "CRAS", {1,1,1, 4}, {16, 17}},
-    {MAGE, "CRAS", {1,1,1, 4}, {18, 19}},
-    {MAGE, "CRAS", {1,1,1, 4}, {19, 20}},
-    {MAGE, "CRAS", {1,1,1, 4}, {16, 20}},
-    {MAGE, "CRAS", {1,1,1, 4}, {11, 11}},
-    {MAGE, "CRAS", {1,1,1, 4}, {22, 22}}
-};
+SpriteSlot playerSpriteSlot;
+
+#define SPRITE_BANK_POSITION QUADRANT_0 | 0
 
 void start_game(){
-    SpriteSlot playerSpriteSlot;
-
     init_graphics();
-
+    
     playerSpriteSlot = allocate_sprite(&ASSET__player__player_bmp_load_list);
 
-    initialize_cursor(&playerSpriteSlot);
-    set_unit_spritesheet(&playerSpriteSlot);
-    load_units_into_array(unit_bank);
+    // hard coding the bank position so no weird stuff happens
+    initialize_cursor(SPRITE_BANK_POSITION);
+    set_unit_spriteBank(SPRITE_BANK_POSITION);
     
-
     do_ram_loading();
     game_load_map(0);
-
-
-    draw_unit_sprites_into_sram();
 
     change_game_state(CURSOR_MOVEMENT);
 }

@@ -126,7 +126,7 @@ void draw_tile_into_gram(unsigned char tile_x, unsigned char tile_y, unsigned ch
 
 #pragma code-name(push, "PROG0")
 void redraw_tile(unsigned char tile_x, unsigned char tile_y, unsigned char target_quadrant){
-    draw_tile_into_gram(tile_x, tile_y, target_map_level[(tile_x << 5) + tile_y], target_quadrant);
+    draw_tile_into_gram(tile_x, tile_y, target_map_level[(tile_y << 5) + tile_x], target_quadrant);
 }
 #pragma code-name (pop)
 

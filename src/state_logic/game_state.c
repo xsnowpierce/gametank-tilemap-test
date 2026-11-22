@@ -3,9 +3,12 @@
 #include "unit_selected.h"
 #include "../gen/assets/ui.h"
 #include "../map/map_drawing.h"
+#include "../map/unit_data.h"
+#include <string.h>
 
 enum GAME_STATE currentGameState = CURSOR_MOVEMENT;
 unsigned char current_map_id;
+Unit unit_array[MAX_UNIT_COUNT];
 
 void do_ram_loading(){
     uiSpriteSlot = allocate_sprite(&ASSET__ui__uitilesheet_bmp_load_list);
@@ -14,6 +17,11 @@ void do_ram_loading(){
 void game_load_map(unsigned char map_id){
     current_map_id = map_id;
     load_map_id(map_id);
+
+    // copy the appropirate unit array into ram
+    memcpy(unit_array, game_unit_array[map_id], sizeof(game_unit_array[map_id]));
+
+    draw_unit_sprites_into_sram(unit_array, MAX_UNIT_COUNT);
 }
 
 void change_game_state(enum GAME_STATE targetState){

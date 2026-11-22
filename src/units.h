@@ -19,18 +19,15 @@ typedef struct {
     unsigned char currentQuadrant;
 } Unit;
 
-extern Unit units_array[];
-
-void set_unit_spritesheet(SpriteSlot *slot);
-void load_units_into_array(Unit units[MAX_UNIT_COUNT]);
-void draw_unit_sprites_into_sram();
+void set_unit_spriteBank(unsigned char spriteSheetBank);
+void draw_unit_sprites_into_sram(Unit* unit_array, unsigned char array_size);
 
 void draw_unit_into_sram(Unit *unit);
 void direct_draw_unit(Unit *unit, unsigned char spriteFrame);
 
-int get_unit_on_tile(unsigned char tile_x, unsigned char tile_y, Unit *return_unit);
+Unit* get_unit_on_tile(unsigned char tile_x, unsigned char tile_y);
 char* get_job_name(enum UNIT_JOB job);
 
-vector_u8b get_unit_sprite_point(unsigned char type);
+vector_u8b get_unit_sprite_point(enum UNIT_JOB type);
 
 #endif

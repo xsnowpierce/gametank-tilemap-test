@@ -15,8 +15,5 @@ void redraw_tile_in_sram(vector_u8b tile_position, unsigned char target_quadrant
 }
 
 void redraw_unit_in_sram(Unit *unit){
-    push_rom_bank();
-    change_rom_bank(BANK_PROG0);
     draw_unit_into_sram(unit);
-    pop_rom_bank();
 }

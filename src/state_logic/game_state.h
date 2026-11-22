@@ -1,15 +1,15 @@
 #ifndef GAME_STATE_H
 #define GAME_STATE_H
 
-#include "../map/map_defs.h"
+#include "../units.h"
 
 enum GAME_STATE {
     CURSOR_MOVEMENT, SELECTING_UNIT
 };
 
 extern enum GAME_STATE currentGameState;
-
 extern unsigned char current_map_id;
+extern Unit unit_array[MAX_UNIT_COUNT];
 
 void do_ram_loading();
 void game_load_map(unsigned char map_id);

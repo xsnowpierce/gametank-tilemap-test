@@ -1,11 +1,9 @@
 #include "units.h"
-#include "gt/banking.h"
 #include "gt/gfx/draw_direct.h"
 #include "gt/gfx/draw_queue.h"
 #include "camera.h"
 #include "gt/gfx/gfx_sys.h"
 #include "vector.h"
-#include "gen/bank_nums.h"
 
 #define TILE_SIZE 8
 #define TILES_ON_SCREEN 16
@@ -13,36 +11,23 @@
 //static void draw_unit(Unit *unit, unsigned char spriteFrame);
 void draw_unit_into_sram(Unit *unit);
 
-SpriteSlot *spriteSheet;
-Unit units_array[MAX_UNIT_COUNT];
+unsigned char spriteSheetBank;
 
-void set_unit_spritesheet(SpriteSlot *slot){
-    spriteSheet = slot;
+void set_unit_spriteBank(unsigned char slot){
+    spriteSheetBank = slot;
 }
 
-void load_units_into_array(Unit units[MAX_UNIT_COUNT]){
-    char i = 0;
-    for(i = 0; i < MAX_UNIT_COUNT; ++i){
-        units_array[i] = units[i];
-    }
-}
-
-void draw_unit_sprites_into_sram(){
+void draw_unit_sprites_into_sram(Unit *unit_array, unsigned char array_size){
     char i = 0;
     
-    for(i = 0; i < MAX_UNIT_COUNT; ++i){
-        if(units_array[i].unitJob == NULL){
+    for(i = 0; i < array_size; ++i){
+        if(unit_array[i].unitJob == NULL){
             continue;
         }
-
-        push_rom_bank();
-        change_rom_bank(BANK_PROG0);
-        draw_unit_into_sram(&units_array[i]);
-        pop_rom_bank();
+        draw_unit_into_sram(&unit_array[i]);
     }
 }
 
-#pragma code-name(push, "PROG0")
 void draw_unit_into_sram(Unit *unit){
     char i, j;
     vector_u8b spritePosition;
@@ -72,7 +57,7 @@ void draw_unit_into_sram(Unit *unit){
     }
 
     // for sprite 0
-    direct_prepare_sprite_ram_array_mode(*spriteSheet);
+    direct_prepare_sprite_ram_array_mode(spriteSheetBank);
     for (i = 0; i < TILE_SIZE; ++i) {
         unsigned int source_row = ((spritePosition.y + i) << 7) + spritePosition.x;
         unsigned int tile_row = i << 3;
@@ -95,7 +80,7 @@ void draw_unit_into_sram(Unit *unit){
     }
 
     // for sprite 1
-    direct_prepare_sprite_ram_array_mode(*spriteSheet);
+    direct_prepare_sprite_ram_array_mode(spriteSheetBank);
     for (i = 0; i < TILE_SIZE; ++i) {
         unsigned int source_row = ((spritePosition.y + i) << 7) + spritePosition.x + (TILE_SIZE);
         unsigned int tile_row = i << 3;
@@ -118,7 +103,7 @@ void draw_unit_into_sram(Unit *unit){
     }
 
     // for sprite 2
-    direct_prepare_sprite_ram_array_mode(*spriteSheet);
+    direct_prepare_sprite_ram_array_mode(spriteSheetBank);
     for (i = 0; i < TILE_SIZE; ++i) {
         unsigned int source_row = ((spritePosition.y + i) << 7) + spritePosition.x + (16);
         unsigned int tile_row = i << 3;
@@ -140,7 +125,6 @@ void draw_unit_into_sram(Unit *unit){
         }
     }
 }
-#pragma code-name (pop)
 
 // void update_unit_animation(){
 //     ++current_sprite_animation_counter;
@@ -202,31 +186,24 @@ void direct_draw_unit(Unit *unit, unsigned char spriteFrame){
     animationOffset = spriteFrame << 3;
 
     spritePosition = get_unit_sprite_point(unit->unitJob);
-    direct_prepare_sprite_mode(*spriteSheet);
+    direct_prepare_sprite_mode(spriteSheetBank);
     DIRECT_DRAW_SPRITE((unit->tile_position.x << 3) - camera_x, (unit->tile_position.y << 3) - camera_y, 
         TILE_SIZE, TILE_SIZE, spritePosition.x + animationOffset, spritePosition.y);
 }
 
-int get_unit_on_tile(unsigned char tile_x, unsigned char tile_y, Unit *return_unit){
-    unsigned char i = 0;
+// Unit *get_unit_on_tile(unsigned char tile_x, unsigned char tile_y){
+//     unsigned char i;
+//     Unit defaultUnit;
     
-    for(i = 0; i < MAX_UNIT_COUNT; ++i){
-        if(units_array[i].tile_position.x != tile_x){
-            continue;
-        }
+//     for(i = 0; i < MAX_UNIT_COUNT; ++i){
+//         if(units_array[i].tile_position.x == tile_x && units_array[i].tile_position.y == tile_y){
+//             return &units_array[i];
+//         }
+//     }
+//     return &defaultUnit;
+// }
 
-        if(units_array[i].tile_position.y != tile_y){
-            continue;
-        }
-
-        *return_unit = units_array[i];
-        return 1;
-    } 
-
-    return 0;
-}
-
-vector_u8b get_unit_sprite_point(unsigned char type){
+vector_u8b get_unit_sprite_point(enum UNIT_JOB type){
     vector_u8b return_vector;
 
     switch(type){
