@@ -26,7 +26,6 @@ unsigned char node_valid[NODE_COUNT];
 unsigned char node_local_x[NODE_COUNT];
 unsigned char node_local_y[NODE_COUNT];
 
-vector_u8b start_position;
 
 #pragma code-name (push, "PROG1")
 static void add_node_to_queue(unsigned char map_id, unsigned int node, unsigned char next_distance, unsigned char max_steps, unsigned int *queue_back){
@@ -55,18 +54,11 @@ static void find_reachable_tiles(unsigned char map_id, vector_u8b unit_start_pos
     unsigned char local_x, local_y;
     int map_x, map_y;
 
-    if (unit_start_position.x >= MAP_WIDTH || unit_start_position.y >= MAP_HEIGHT) {
-        return;
-    }
-
-
     // doing this so if somewhere i make a mistake and have a unit 
     // with too high of a movement range, we're still safe
     if (movement_range > UNIT_MOVE_LIMIT) {
         movement_range = UNIT_MOVE_LIMIT;
     }
-
-    start_position = unit_start_position;
 
     for (i = 0; i < NODE_COUNT; ++i) {
         local_x = (unsigned char) i % MOVE_WINDOW_WIDTH;
@@ -96,7 +88,6 @@ static void find_reachable_tiles(unsigned char map_id, vector_u8b unit_start_pos
     ++queue_back;
 
     while (queue_front < queue_back) {
-        unsigned char is_passable;
         unsigned int node, next_distance, x, y;
 
         node = node_queue[queue_front];
