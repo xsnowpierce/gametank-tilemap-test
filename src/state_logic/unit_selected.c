@@ -32,7 +32,7 @@
 #define HEALTH_PIXEL_WIDTH (HEALTH_MAX_CHARACTERS * PIXELS_PER_TEXT_CHARACTER)
 
 
-enum PROGRESS_STATE { IN_SUMMARY_MENU, MOVING_CURSOR };
+enum PROGRESS_STATE { IN_SUMMARY_MENU, MOVING_CURSOR, UNIT_MOVING_TO_TILE, UNIT_ORDER_MENU };
 enum PROGRESS_STATE currentProgressionState;
 
 enum TILE currentHoveredTile = TILE_BLACK;
@@ -49,6 +49,10 @@ void draw_unit_information();
 void queue_draw_selected_unit();
 void print_unit_information_into_gram();
 void cancel_selecting_unit();
+void clicked_with_unit();
+
+void draw_unit_order_menu_into_vram();
+void draw_unit_order_menu();
 
 void initialize_state_unit_selected(){
     PROFILER_START(1);
@@ -93,6 +97,12 @@ void update_state_unit_selected(){
         update_camera();
         cursor_update_locked_movement(&unit_reachable_tiles, unit_reachable_tiles_count, selectedUnit->tile_position);
         
+        if(currentProgressionState == MOVING_CURSOR){
+            if(player1_buttons & INPUT_MASK_A){
+                // try to do unit action
+                clicked_with_unit();
+            }
+        }
     }
 
     cursor_pos.x = cursor_tile_position_x;
@@ -177,4 +187,16 @@ void cancel_selecting_unit(){
     cursor_tile_position_y = cursor_starting_position.y;
     currentProgressionState = IN_SUMMARY_MENU;
     change_game_state(CURSOR_MOVEMENT);
+}
+
+void clicked_with_unit(){
+    currentProgressionState = UNIT_ORDER_MENU;
+}
+
+void draw_unit_order_menu_into_vram(){
+
+}
+
+void draw_unit_order_menu(){
+    
 }
