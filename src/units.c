@@ -1,9 +1,12 @@
 #include "units.h"
+#include "gt/banking.h"
 #include "gt/gfx/draw_direct.h"
 #include "gt/gfx/draw_queue.h"
 #include "camera.h"
 #include "gt/gfx/gfx_sys.h"
 #include "vector.h"
+
+#include "gen/bank_nums.h"
 
 #define TILE_SIZE 8
 #define TILES_ON_SCREEN 16
@@ -24,7 +27,8 @@ void draw_unit_sprites_into_sram(Unit *unit_array, unsigned char array_size){
     }
 }
 
-void draw_unit_into_sram(Unit *unit){
+#pragma code-name (push, "PROG0")
+void private_draw_unit_into_sram(Unit *unit){
     char i, j;
     vector_u8b spritePosition;
     unsigned char tile_pixels[TILE_SIZE << 3];
@@ -122,55 +126,14 @@ void draw_unit_into_sram(Unit *unit){
     }
 }
 
-// void update_unit_animation(){
-//     ++current_sprite_animation_counter;
+#pragma code-name (pop)
 
-//     if (current_sprite_animation_counter >= SPRITE_ANIMATION_FRAME_TIME) {
-//         current_sprite_animation_counter = 0;
-
-//         if (sprite_animation_ascending) {
-//             if (current_sprite_frame_index >= SPRITE_ANIMATION_MAX_FRAME) {
-//                 sprite_animation_ascending = 0;
-//             } else {
-//                 ++current_sprite_frame_index;
-//             }
-//         } else {
-//             if (current_sprite_frame_index <= 0) {
-//                 sprite_animation_ascending = 1;
-//             } else {
-//                 --current_sprite_frame_index;
-//             }
-//         }
-//     }
-// }
-
-
-// void draw_visible_units(){
-//     unsigned char i;
-
-//     __asm__("SEI");
-//     direct_prepare_sprite_mode(*spriteSheet);
-//     for (i = 0; i < MAX_UNIT_COUNT; ++i) {
-//         draw_unit(&units_array[i], current_sprite_frame_index);
-//     }
-//     __asm__("CLI");
-// }
-
-// void draw_visible_units_at_frame(unsigned char target_frame){
-//     unsigned char i;
-//     __asm__("SEI");
-//     direct_prepare_sprite_mode(*spriteSheet);
-//     for (i = 0; i < MAX_UNIT_COUNT; ++i) {
-//         draw_unit(&units_array[i], target_frame);
-//     }
-
-//     __asm__("CLI");
-// }
-
-// void force_draw_target_unit(Unit *unit){
-//     direct_prepare_sprite_mode(*spriteSheet);
-//     draw_unit(unit, current_sprite_frame_index);
-// }
+void draw_unit_into_sram(Unit *unit){
+    push_rom_bank();
+    change_rom_bank(BANK_PROG0);
+    private_draw_unit_into_sram(unit);
+    pop_rom_bank();
+}
 
 void direct_draw_unit(Unit *unit, unsigned char spriteFrame){
     vector_u8b spritePosition;
@@ -186,18 +149,6 @@ void direct_draw_unit(Unit *unit, unsigned char spriteFrame){
     DIRECT_DRAW_SPRITE((unit->tile_position.x << 3) - camera_x, (unit->tile_position.y << 3) - camera_y, 
         TILE_SIZE, TILE_SIZE, spritePosition.x + animationOffset, spritePosition.y);
 }
-
-// Unit *get_unit_on_tile(unsigned char tile_x, unsigned char tile_y){
-//     unsigned char i;
-//     Unit defaultUnit;
-    
-//     for(i = 0; i < MAX_UNIT_COUNT; ++i){
-//         if(units_array[i].tile_position.x == tile_x && units_array[i].tile_position.y == tile_y){
-//             return &units_array[i];
-//         }
-//     }
-//     return &defaultUnit;
-// }
 
 vector_u8b get_unit_sprite_point(enum UNIT_JOB type){
     vector_u8b return_vector;

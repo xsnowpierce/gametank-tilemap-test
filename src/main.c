@@ -2,8 +2,6 @@
 #include "gt/gfx/draw_queue.h"
 #include "gt/gfx/gfx_sys.h"
 #include "gt/gfx/sprites.h"
-
-#include "map/map_drawing.h"
 #include "gt/input.h"
 
 #include "state_logic/game_state.h"
@@ -22,6 +20,7 @@ void start_game(){
     //set_unit_spriteBank(SPRITE_BANK_POSITION);
     
     do_ram_loading();
+
     game_load_map(0);
 
     change_game_state(CURSOR_MOVEMENT);
@@ -39,7 +38,6 @@ void update(){
 
 void draw(){
     // all things here should call await_drawing() themselves.
-    draw_level_map();
     draw_game_state(currentGameState);
 }
 

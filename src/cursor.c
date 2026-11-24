@@ -2,7 +2,6 @@
 #include "camera.h"
 #include "gt/banking.h"
 #include "gt/gfx/gfx_sys.h"
-#include "gt/gfx/sprites.h"
 #include "gt/input.h"
 #include "gt/gfx/draw_queue.h"
 #include "vector.h"

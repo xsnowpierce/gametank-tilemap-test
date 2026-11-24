@@ -17,6 +17,7 @@ typedef struct {
     Statistics unitStats;
     vector_u8b tile_position;
     unsigned char currentQuadrant;
+    unsigned char has_finished_turn;
 } Unit;
 
 void draw_unit_sprites_into_sram(Unit* unit_array, unsigned char array_size);
