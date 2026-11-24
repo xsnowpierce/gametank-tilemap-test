@@ -12,6 +12,7 @@
 
 #include "../gt/banking.h"
 #include "../gen/bank_nums.h"
+#include "unit_selected_flicker.h"
 
 #define UI_OFFSET_X 1
 #define UI_OFFSET_Y 8
@@ -54,14 +55,14 @@ void update_state_unit_summary_menu(){
     update_cursor_animation();
 
     // if player moves the cursor then exit the menu
-    if(pressed_input_this_frame(0, INPUT_MASK_A)
-        || pressed_input_this_frame(0, INPUT_MASK_ANY_DIRECTION))
+    if(player1_new_buttons & INPUT_MASK_A
+       || player1_new_buttons & INPUT_MASK_ANY_DIRECTION)
     {
         change_game_state(CHOOSING_MOVEMENT_PATH);
         return;
     }
 
-    else if(pressed_input_this_frame(0, INPUT_MASK_B)){
+    else if(player1_new_buttons & INPUT_MASK_B){
         // cancel out of menu
         cancel_selecting_unit();
         return;
@@ -69,13 +70,17 @@ void update_state_unit_summary_menu(){
 }
 
 void queue_draw_state_unit_summary_menu(){
-    draw_cursor_selecting();
+    if(unit_flicker_do_draw_unit){
+        draw_cursor_selecting();
+    }
     draw_unit_information();
 }
 
 void draw_state_unit_summary_menu(){
-    direct_draw_unit(currentSelectedUnit, 3);
-    await_drawing();
+    if(unit_flicker_do_draw_unit){
+        direct_draw_unit(currentSelectedUnit, 3);
+        await_drawing();
+    }
 }
 
 #pragma code-name (push, "PROG0")

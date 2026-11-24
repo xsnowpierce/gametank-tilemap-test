@@ -15,7 +15,7 @@ void update_state_cursor_movement(){
     unsigned char i;
 
 
-    if(pressed_input_this_frame(0, INPUT_MASK_A)){
+    if(player1_new_buttons & INPUT_MASK_A){
         // player pressed A, check if there is a unit on this tile
         // if there is, keep track of the unit, and change current game state
 

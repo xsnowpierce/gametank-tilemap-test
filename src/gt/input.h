@@ -16,6 +16,4 @@ extern int player2_buttons, player2_old_buttons, player2_new_buttons;
 #define INPUT_MASK_ANY_DIRECTION (INPUT_MASK_UP|INPUT_MASK_DOWN|INPUT_MASK_LEFT|INPUT_MASK_RIGHT)
 
 void update_inputs();
-unsigned char pressed_input_this_frame(unsigned char controller_port, int button_mask);
-
 #endif

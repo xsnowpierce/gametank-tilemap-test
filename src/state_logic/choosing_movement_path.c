@@ -9,6 +9,7 @@
 #include "../gt/input.h"
 #include "../gt/gfx/draw_queue.h"
 #include "game_state.h"
+#include "unit_selected_flicker.h"
 
 void cancel_selecting_unit();
 void clicked_with_unit();
@@ -18,25 +19,13 @@ vector_u8b *unit_movement_path_to_selected_tile;
 vector_u8b unit_reachable_tiles;
 unsigned char unit_reachable_tiles_count;
 
-static unsigned char has_let_go_of_a_button = 0;
-
 void initialize_state_choosing_movement_path(){
     unit_reachable_tiles_count = get_unit_reachable_tiles(current_map_id, currentSelectedUnit->tile_position, currentSelectedUnit->unitStats.movementRange, &unit_reachable_tiles);
-
-    if(!(player1_buttons & INPUT_MASK_A)){
-        has_let_go_of_a_button = 1;
-    }
 }
 
 void update_state_choosing_movement_path(){
     update_cursor();
     update_cursor_animation();
-
-    if(has_let_go_of_a_button == 0){
-        if(!(player1_buttons & INPUT_MASK_A)){
-            has_let_go_of_a_button = 1;
-        }
-    }
 
     update_map_sprite_animation();
     update_camera();
@@ -45,11 +34,11 @@ void update_state_choosing_movement_path(){
         currentSelectedUnit->tile_position
     );
 
-    if(player1_buttons & INPUT_MASK_A && has_let_go_of_a_button == 1){
+    if(player1_new_buttons & INPUT_MASK_A){
         // try to do unit action
         clicked_with_unit();
     }
-    else if(player1_buttons & INPUT_MASK_B){
+    else if(player1_new_buttons & INPUT_MASK_B){
         // cancel out of menu
         cancel_selecting_unit();
         return;
@@ -57,12 +46,16 @@ void update_state_choosing_movement_path(){
 }
 
 void queue_draw_state_choosing_movement_path(){
-    draw_cursor_selecting();
+    if(unit_flicker_do_draw_unit){
+        draw_cursor_selecting();
+    }
 }
 
 void draw_state_choosing_movement_path(){
-    direct_draw_unit(currentSelectedUnit, 3);
-    await_drawing();
+    if(unit_flicker_do_draw_unit){
+        direct_draw_unit(currentSelectedUnit, 3);
+        await_drawing();
+    }
 }
 
 void clicked_with_unit(){

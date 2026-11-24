@@ -11,6 +11,8 @@
 #include "../map/unit_data.h"
 #include <string.h>
 
+#include "unit_selected_flicker.h"
+
 enum GAME_STATE currentGameState = CURSOR_MOVEMENT;
 unsigned char current_map_id;
 Unit unit_array[MAX_UNIT_COUNT];
@@ -58,6 +60,8 @@ void initialize_game_state(enum GAME_STATE targetState){
 }
 
 void update_game_state(enum GAME_STATE targetState){
+    update_unit_flickering();
+    
     switch(targetState){
         case CURSOR_MOVEMENT:
             update_state_cursor_movement();
