@@ -24,3 +24,20 @@ void update_inputs(){
     player2_new_buttons = player2_buttons & ~player2_old_buttons;
 }
 #pragma optimize (pop)
+
+unsigned char pressed_input_this_frame(unsigned char controller_port, int button_mask){
+    switch(controller_port){
+        case 0:
+            if((!(player1_old_buttons & button_mask)) && (player1_new_buttons & button_mask)){
+                return 1;
+            }
+            return 0;
+            break;
+        case 1:
+            if((!(player2_old_buttons & button_mask)) && (player2_new_buttons & button_mask)){
+                return 1;
+            }
+            return 0;
+            break;
+    }
+}

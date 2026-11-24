@@ -36,9 +36,6 @@ void queue_draw_selected_unit();
 void print_unit_information_into_gram();
 void cancel_selecting_unit();
 
-static unsigned char has_let_go_of_a_button = 0;
-
-
 void initialize_state_unit_summary_menu(){
 
     push_rom_bank();
@@ -51,30 +48,20 @@ void initialize_state_unit_summary_menu(){
     // since its selected now.
     redraw_tile_in_sram(currentSelectedUnit->tile_position, 
         currentSelectedUnit->currentQuadrant);
-    
-    if(!(player1_buttons & INPUT_MASK_A)){
-        has_let_go_of_a_button = 1;
-    }
 }
 
 void update_state_unit_summary_menu(){
     update_cursor_animation();
 
-    if(has_let_go_of_a_button == 0){
-        if(!(player1_buttons & INPUT_MASK_A)){
-            has_let_go_of_a_button = 1;
-        }
-    }
-
     // if player moves the cursor then exit the menu
-    if((player1_buttons & INPUT_MASK_A && has_let_go_of_a_button == 1) 
-        || player1_buttons & INPUT_MASK_ANY_DIRECTION)
+    if(pressed_input_this_frame(0, INPUT_MASK_A)
+        || pressed_input_this_frame(0, INPUT_MASK_ANY_DIRECTION))
     {
         change_game_state(CHOOSING_MOVEMENT_PATH);
         return;
     }
 
-    else if(player1_buttons & INPUT_MASK_B){
+    else if(pressed_input_this_frame(0, INPUT_MASK_B)){
         // cancel out of menu
         cancel_selecting_unit();
         return;
@@ -94,15 +81,17 @@ void draw_state_unit_summary_menu(){
 #pragma code-name (push, "PROG0")
 void print_unit_information_into_gram(){
     char i;
+
+    direct_prepare_sprite_mode(TEXT_BANK);
+    
+
     // now draw onto this somehow
     direct_prepare_sprite_ram_array_mode(TEXT_BANK);
     
     // draw the units name
     bittext_set_x(0);
     bittext_set_y(0);
-    for(i = 0; i < UNIT_NAME_MAX_CHARACTERS; ++i){
-        bittext_draw_char(' ');
-    }
+    bittext_write_str("      ");
     bittext_set_x(0);
     //bittext_set_y(0);
     bittext_write_str(currentSelectedUnit->unitName);
@@ -110,9 +99,7 @@ void print_unit_information_into_gram(){
     // draw the job name
     bittext_set_x(0);
     bittext_set_y(8);
-    for(i = 0; i < JOB_NAME_MAX_CHARACTERS; ++i){
-        bittext_draw_char(' ');
-    }
+    bittext_write_str("         ");
     bittext_set_x(0);
     //bittext_set_y(8);
     bittext_write_str(get_job_name(currentSelectedUnit->unitJob));
