@@ -1,6 +1,5 @@
 #include "choosing_movement_path.h"
 
-#include "../gt/gfx/draw_queue.h"
 #include "../map/map_moving.h"
 #include "../camera.h"
 #include "../cursor.h"
@@ -16,14 +15,23 @@ void clicked_with_unit();
 
 vector_u8b *unit_movement_path_to_selected_tile;
 
-vector_u8b unit_reachable_tiles;
-unsigned char unit_reachable_tiles_count;
+static vector_u8b unit_reachable_tiles;
+static unsigned char unit_reachable_tiles_count;
+
+static unsigned char current_unit_animation_frame_tick = WALKING_SPRITE_ANIMATION_FRAME_LENGTH;
+static unsigned char current_animation_frame = 0;
 
 void initialize_state_choosing_movement_path(){
     unit_reachable_tiles_count = get_unit_reachable_tiles(current_map_id, currentSelectedUnit->tile_position, currentSelectedUnit->unitStats.movementRange, &unit_reachable_tiles);
 }
 
 void update_state_choosing_movement_path(){
+    --current_unit_animation_frame_tick;
+    if(current_unit_animation_frame_tick <= 0){
+        current_animation_frame ^= 1;
+        current_unit_animation_frame_tick = WALKING_SPRITE_ANIMATION_FRAME_LENGTH;
+    }
+
     update_cursor();
     update_cursor_animation();
 
@@ -53,7 +61,7 @@ void queue_draw_state_choosing_movement_path(){
 
 void draw_state_choosing_movement_path(){
     if(unit_flicker_do_draw_unit){
-        direct_draw_unit(currentSelectedUnit, 3);
+        direct_draw_unit(currentSelectedUnit, 3 + current_animation_frame);
         await_drawing();
     }
 }

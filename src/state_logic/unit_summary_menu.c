@@ -32,6 +32,9 @@
 #define JOB_NAME_PIXEL_WIDTH (JOB_NAME_MAX_CHARACTERS * PIXELS_PER_TEXT_CHARACTER)
 #define HEALTH_PIXEL_WIDTH (HEALTH_MAX_CHARACTERS * PIXELS_PER_TEXT_CHARACTER)
 
+static unsigned char current_unit_animation_frame_tick = WALKING_SPRITE_ANIMATION_FRAME_LENGTH;
+static unsigned char current_animation_frame = 0;
+
 void draw_unit_information();
 void queue_draw_selected_unit();
 void print_unit_information_into_gram();
@@ -52,11 +55,16 @@ void initialize_state_unit_summary_menu(){
 }
 
 void update_state_unit_summary_menu(){
+    --current_unit_animation_frame_tick;
+    if(current_unit_animation_frame_tick <= 0){
+        current_animation_frame ^= 1;
+        current_unit_animation_frame_tick = WALKING_SPRITE_ANIMATION_FRAME_LENGTH;
+    }
+
     update_cursor_animation();
 
     // if player moves the cursor then exit the menu
-    if(player1_new_buttons & INPUT_MASK_A
-       || player1_new_buttons & INPUT_MASK_ANY_DIRECTION)
+    if(player1_new_buttons & INPUT_MASK_A || player1_new_buttons & INPUT_MASK_ANY_DIRECTION)
     {
         change_game_state(CHOOSING_MOVEMENT_PATH);
         return;
@@ -78,7 +86,7 @@ void queue_draw_state_unit_summary_menu(){
 
 void draw_state_unit_summary_menu(){
     if(unit_flicker_do_draw_unit){
-        direct_draw_unit(currentSelectedUnit, 3);
+        direct_draw_unit(currentSelectedUnit, 3 + current_animation_frame);
         await_drawing();
     }
 }
