@@ -18,12 +18,19 @@ void draw_unit_into_sram(Unit *unit);
 
 void draw_unit_sprites_into_sram(Unit *unit_array, unsigned char array_size){
     char i = 0;
+    Unit *unit;
     
     for(i = 0; i < array_size; ++i){
-        if(unit_array[i].unitJob == NULL){
+        unit = &unit_array[i];
+
+        if(unit->unitJob == NULL){
             continue;
         }
-        draw_unit_into_sram(&unit_array[i]);
+
+        push_rom_bank();
+        change_rom_bank(BANK_PROG0);
+        draw_unit_into_sram(unit);
+        pop_rom_bank();
     }
 }
 

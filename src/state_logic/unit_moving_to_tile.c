@@ -128,6 +128,7 @@ void increment_tile_movement(){
         if (current_tile_progression >= (tiles_to_reach_destination - 1)) {
             // we have reached the end of the animation, progress to the
             // next part of the program.
+            
             progress_to_unit_order_menu();
             return;
         }
@@ -166,6 +167,6 @@ void queue_draw_state_unit_moving_to_tile(){
 }
 
 void progress_to_unit_order_menu(){
-    //currentSelectedUnit->temp_tile_position = animation_tile_position;
+    
     change_game_state(UNIT_ORDER_MENU);
 }
