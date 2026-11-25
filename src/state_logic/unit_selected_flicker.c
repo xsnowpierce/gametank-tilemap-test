@@ -1,7 +1,7 @@
 #include "unit_selected_flicker.h"
 
-#define SHOW_SPRITES_FRAME_COUNT 50
-#define HIDE_SPRITES_FRAME_COUNT 15
+#define SHOW_SPRITES_FRAME_COUNT 40
+#define HIDE_SPRITES_FRAME_COUNT 8
 
 unsigned char unit_flicker_do_draw_unit = 0;
 unsigned char current_sprite_visibility_ticks = HIDE_SPRITES_FRAME_COUNT;

@@ -10,7 +10,7 @@ void increment_tile_movement();
 
 #define TILE_SIZE 8
 
-#define MOVEMENT_FRAMES_UNTIL_MOVE_TICK 3
+#define MOVEMENT_FRAMES_UNTIL_MOVE_TICK 2
 static unsigned char current_movement_frames_until_tick;
 
 static vector_u8b *unit_movement_path_to_selected_tile;
@@ -167,6 +167,5 @@ void queue_draw_state_unit_moving_to_tile(){
 }
 
 void progress_to_unit_order_menu(){
-    
     change_game_state(UNIT_ORDER_MENU);
 }
