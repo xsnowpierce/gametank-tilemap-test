@@ -150,6 +150,21 @@ void direct_draw_unit(Unit *unit, unsigned char spriteFrame){
         TILE_SIZE, TILE_SIZE, spritePosition.x + animationOffset, spritePosition.y);
 }
 
+void direct_draw_unit_at_position(Unit *unit, unsigned char spriteFrame, vector_u8b position){
+    vector_u8b spritePosition;
+    unsigned char animationOffset = 0;
+
+    if (unit->unitJob == NULL)
+        return;
+
+    animationOffset = spriteFrame << 3;
+
+    spritePosition = get_unit_sprite_point(unit->unitJob);
+    direct_prepare_sprite_mode(spriteSheetBank);
+    DIRECT_DRAW_SPRITE(position.x - camera_x, position.y - camera_y, 
+        TILE_SIZE, TILE_SIZE, spritePosition.x + animationOffset, spritePosition.y);
+}
+
 vector_u8b get_unit_sprite_point(enum UNIT_JOB type){
     vector_u8b return_vector;
 
