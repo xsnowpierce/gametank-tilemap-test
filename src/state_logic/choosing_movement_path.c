@@ -13,8 +13,6 @@
 void cancel_selecting_unit();
 void clicked_with_unit();
 
-vector_u8b *unit_movement_path_to_selected_tile;
-
 static vector_u8b unit_reachable_tiles;
 static unsigned char unit_reachable_tiles_count;
 
@@ -61,26 +59,11 @@ void queue_draw_state_choosing_movement_path(){
 
 void draw_state_choosing_movement_path(){
     if(unit_flicker_do_draw_unit){
-        direct_draw_unit(currentSelectedUnit, 3 + current_animation_frame);
+        direct_draw_unit(currentSelectedUnit, current_animation_frame + 3);
         await_drawing();
     }
 }
 
 void clicked_with_unit(){
-    vector_u8b cursor_clicked_position;
-    vector_u8b *unit_movement_path;
-
-    cursor_clicked_position.x = cursor_tile_position_x;
-    cursor_tile_position_y = cursor_tile_position_y;
-
-    // move unit visually, not functionally, to the new position, using their walking
-    // animation and using the most efficient path as per the algorithm
-    
-    get_unit_path_to_tile(0, currentSelectedUnit->tile_position, 
-        cursor_clicked_position, 
-        currentSelectedUnit->unitStats.movementRange, 
-        unit_movement_path_to_selected_tile
-    );
-
     change_game_state(UNIT_MOVING_TO_TILE);
 }
