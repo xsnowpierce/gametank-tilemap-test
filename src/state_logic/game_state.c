@@ -14,6 +14,9 @@
 
 #include "unit_selected_flicker.h"
 
+#include "../gt/banking.h"
+#include "../gen/bank_nums.h"
+
 enum GAME_STATE currentGameState = CURSOR_MOVEMENT;
 unsigned char current_map_id;
 Unit unit_array[MAX_UNIT_COUNT];
@@ -34,7 +37,10 @@ void game_load_map(unsigned char map_id){
     load_map_id(map_id);
 
     // copy the appropirate unit array into ram
+    push_rom_bank();
+    change_rom_bank(BANK_PROG0);
     memcpy(unit_array, game_unit_array[map_id], sizeof(game_unit_array[map_id]));
+    pop_rom_bank();
 
     draw_unit_sprites_into_sram(unit_array, MAX_UNIT_COUNT);
 }

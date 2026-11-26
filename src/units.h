@@ -16,6 +16,7 @@ typedef struct {
     enum UNIT_JOB unitJob;
     char* unitName;
     Statistics unitStats;
+    unsigned char unit_team_id;
 
     // UNIT PROGRAMMING
     vector_u8b tile_position;
@@ -34,6 +35,6 @@ void direct_draw_unit_at_position(Unit *unit, unsigned char spriteFrame, vector_
 Unit* get_unit_on_tile(unsigned char tile_x, unsigned char tile_y);
 char* get_job_name(enum UNIT_JOB job);
 
-vector_u8b get_unit_sprite_point(enum UNIT_JOB type);
+vector_u8b get_unit_sprite_point(enum UNIT_JOB type, unsigned char team_id);
 
 #endif

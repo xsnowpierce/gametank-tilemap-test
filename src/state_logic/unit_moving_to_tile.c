@@ -5,6 +5,9 @@
 #include "../cursor.h"
 #include "../map/map_moving.h"
 
+#include "../gt/banking.h"
+#include "../gen/bank_nums.h"
+
 void progress_to_unit_order_menu();
 void increment_tile_movement();
 
@@ -57,7 +60,6 @@ static void set_next_tile_target(){
     }
 }
 
-
 void initialize_state_unit_moving_to_tile(){
     vector_u8b clicked_position;
 
@@ -85,7 +87,6 @@ void initialize_state_unit_moving_to_tile(){
         progress_to_unit_order_menu();
         return;
     }
-
     set_next_tile_target();
 }
 
@@ -136,7 +137,6 @@ void increment_tile_movement(){
         set_next_tile_target();
     }
 }
-
 vector_u8b calculate_drawing_position(){
     vector_u8b pixel_position;
 

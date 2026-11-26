@@ -164,16 +164,17 @@ static void query_locked_movement(vector_u8b *moveable_tiles, unsigned char move
     if(player1_buttons & INPUT_MASK_LEFT) {
         --input_x;
     }
-    if(player1_buttons & INPUT_MASK_RIGHT){
+    else if(player1_buttons & INPUT_MASK_RIGHT){
         ++input_x;
     }
-    if(player1_buttons & INPUT_MASK_UP){
-        --input_y;
+    else{
+        if(player1_buttons & INPUT_MASK_UP){
+            --input_y;
+        }
+        else if(player1_buttons & INPUT_MASK_DOWN){
+            ++input_y;
+        }
     }
-    if(player1_buttons & INPUT_MASK_DOWN){
-        ++input_y;
-    }
-
     // make sure we are allowed to move it
     if(current_input_frame_delay > 0){
         return;

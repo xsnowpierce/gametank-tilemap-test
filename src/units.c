@@ -42,7 +42,7 @@ void private_draw_unit_into_sram(Unit *unit){
     unsigned int target_x = unit->tile_position.x << 3, target_y = unit->tile_position.y << 3;
 
 
-    spritePosition = get_unit_sprite_point(unit->unitJob);
+    spritePosition = get_unit_sprite_point(unit->unitJob, unit->unit_team_id);
 
     if(unit->tile_position.x < 16 && unit->tile_position.y < 16){
         unit->currentQuadrant = QUADRANT_3;
@@ -151,7 +151,7 @@ void direct_draw_unit(Unit *unit, unsigned char spriteFrame){
 
     animationOffset = spriteFrame << 3;
 
-    spritePosition = get_unit_sprite_point(unit->unitJob);
+    spritePosition = get_unit_sprite_point(unit->unitJob, unit->unit_team_id);
     direct_prepare_sprite_mode(spriteSheetBank);
     DIRECT_DRAW_SPRITE((unit->tile_position.x << 3) - camera_x, (unit->tile_position.y << 3) - camera_y, 
         TILE_SIZE, TILE_SIZE, spritePosition.x + animationOffset, spritePosition.y);
@@ -166,13 +166,13 @@ void direct_draw_unit_at_position(Unit *unit, unsigned char spriteFrame, vector_
 
     animationOffset = spriteFrame << 3;
 
-    spritePosition = get_unit_sprite_point(unit->unitJob);
+    spritePosition = get_unit_sprite_point(unit->unitJob, unit->unit_team_id);
     direct_prepare_sprite_mode(spriteSheetBank);
     DIRECT_DRAW_SPRITE(position.x - camera_x, position.y - camera_y, 
         TILE_SIZE, TILE_SIZE, spritePosition.x + animationOffset, spritePosition.y);
 }
 
-vector_u8b get_unit_sprite_point(enum UNIT_JOB type){
+vector_u8b get_unit_sprite_point(enum UNIT_JOB type, unsigned char team_id){
     vector_u8b return_vector;
 
     switch(type){
@@ -183,18 +183,22 @@ vector_u8b get_unit_sprite_point(enum UNIT_JOB type){
 
         case MAGE:
             return_vector.x = 0;
-            return_vector.y = 16;
+            return_vector.y = 24;
             break;
         
         case VAMPIRE:
             return_vector.x = 0;
-            return_vector.y = 24;
+            return_vector.y = 40;
             break;
 
         default:
             return_vector.x = 0;
             return_vector.y = 0;
             break;
+    }
+
+    if(team_id == 1){
+        return_vector.y += 8;
     }
 
     return return_vector;
