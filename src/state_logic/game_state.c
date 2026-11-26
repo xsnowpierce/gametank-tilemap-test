@@ -9,6 +9,7 @@
 #include "../gen/assets/ui.h"
 #include "../map/map_drawing.h"
 #include "../map/unit_data.h"
+#include "../cursor.h"
 #include <string.h>
 
 #include "unit_selected_flicker.h"
@@ -19,6 +20,10 @@ Unit unit_array[MAX_UNIT_COUNT];
 
 SpriteSlot uiSpriteSlot;
 Unit *currentSelectedUnit;
+
+// state variable holders
+vector_u8b temporary_unit_tile_position;
+vector_u8b starting_cursor_position;
 
 void do_ram_loading(){
     uiSpriteSlot = allocate_sprite(&ASSET__ui__uitilesheet_bmp_load_list);
@@ -129,4 +134,9 @@ void reset_all_unit_turn_value(){
     for(i = 0; i < MAX_UNIT_COUNT; ++i){
         unit_array[i].has_finished_turn = 0;
     }
+}
+
+void revert_cursor_position_to_starting_position(){
+    cursor_tile_position_x = starting_cursor_position.x;
+    cursor_tile_position_y = starting_cursor_position.y;
 }

@@ -1,8 +1,12 @@
 #include "gen/assets/player.h"
+#include "gt/audio/backends/tracker_fm/music.h"
 #include "gt/gfx/draw_queue.h"
 #include "gt/gfx/gfx_sys.h"
 #include "gt/gfx/sprites.h"
 #include "gt/input.h"
+
+#include "gt/audio/music.h"
+#include "gt/audio/audio_coprocessor.h"
 
 #include "state_logic/game_state.h"
 
@@ -11,6 +15,8 @@ SpriteSlot playerSpriteSlot;
 #define SPRITE_BANK_POSITION QUADRANT_0 | 0
 
 void start_game(){
+    init_audio_coprocessor();
+    init_music();
     init_graphics();
     
     playerSpriteSlot = allocate_sprite(&ASSET__player__player_bmp_load_list);
@@ -62,7 +68,8 @@ int main () {
         await_draw_queue();
 
         await_vsync(1);
-        flip_pages(); 
+        flip_pages();
+        tick_music();
     }
     return 0;
 }

@@ -1,11 +1,15 @@
 #include "cursor.h"
 #include "camera.h"
+#include "gt/audio/backends/tracker_fm/music.h"
 #include "gt/banking.h"
 #include "gt/gfx/gfx_sys.h"
 #include "gt/input.h"
 #include "gt/gfx/draw_queue.h"
 #include "vector.h"
 #include "gen/bank_nums.h"
+
+#include "gt/audio/music.h"
+#include "gen/assets/sfx.h"
 
 static void on_cursor_move();
 static void query_free_movement();
@@ -251,6 +255,8 @@ static void on_cursor_move(){
     if(target_camera_x != 0 || target_camera_y != 0){
         move_camera(target_camera_x, target_camera_y);
     }
+
+    play_sound_effect(ASSET__sfx__cursor_move_sound_sfx_ID, 1);
 }
 
 void draw_cursor(){

@@ -5,9 +5,9 @@
 
 unsigned char current_animated_bank = 7;
 
-static char current_frame_index = 0;
-static char current_animation_counter = 0;
-static char animation_ascending = 0;
+static unsigned char current_frame_index = 0;
+static unsigned char current_animation_counter = 0;
+static unsigned char animation_ascending = 0;
 
 
 void update_unit_animation(){
@@ -35,4 +35,8 @@ void update_unit_animation(){
 void update_map_sprite_animation(){
     update_unit_animation();
     current_animated_bank = 5 + current_frame_index;
+}
+
+unsigned char get_current_map_frame_index(){
+    return current_frame_index;
 }

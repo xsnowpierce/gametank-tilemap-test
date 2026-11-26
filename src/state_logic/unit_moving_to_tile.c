@@ -167,5 +167,6 @@ void queue_draw_state_unit_moving_to_tile(){
 }
 
 void progress_to_unit_order_menu(){
+    temporary_unit_tile_position = animation_tile_position;
     change_game_state(UNIT_ORDER_MENU);
 }

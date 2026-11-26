@@ -10,8 +10,8 @@
 #include "game_state.h"
 #include "unit_selected_flicker.h"
 
-void cancel_selecting_unit();
-void clicked_with_unit();
+static void cancel_selecting_unit();
+static void clicked_with_unit();
 
 static vector_u8b unit_reachable_tiles;
 static unsigned char unit_reachable_tiles_count;
@@ -64,6 +64,11 @@ void draw_state_choosing_movement_path(){
     }
 }
 
-void clicked_with_unit(){
+static void clicked_with_unit(){
     change_game_state(UNIT_MOVING_TO_TILE);
+}
+
+static void cancel_selecting_unit(){
+    revert_cursor_position_to_starting_position();
+    change_game_state(CURSOR_MOVEMENT);
 }

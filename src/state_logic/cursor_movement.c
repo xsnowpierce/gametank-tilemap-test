@@ -23,6 +23,8 @@ void update_state_cursor_movement(){
             if(unit_array[i].tile_position.x == cursor_tile_position_x && unit_array[i].tile_position.y == cursor_tile_position_y){
                 if(unit_array[i].unitJob != NULL && unit_array[i].has_finished_turn == 0){
                     currentSelectedUnit = &unit_array[i];
+                    starting_cursor_position.x = cursor_tile_position_x;
+                    starting_cursor_position.y = cursor_tile_position_y;
                     change_game_state(UNIT_SUMMARY_MENU);
                     return; 
                 }

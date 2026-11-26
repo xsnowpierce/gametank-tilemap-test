@@ -14,6 +14,7 @@
 #include "../gen/bank_nums.h"
 #include "unit_selected_flicker.h"
 
+
 #define UI_OFFSET_X 1
 #define UI_OFFSET_Y 8
 
@@ -35,10 +36,9 @@
 static unsigned char current_unit_animation_frame_tick = WALKING_SPRITE_ANIMATION_FRAME_LENGTH;
 static unsigned char current_animation_frame = 0;
 
-void draw_unit_information();
-void queue_draw_selected_unit();
-void print_unit_information_into_gram();
-void cancel_selecting_unit();
+static void draw_unit_information();
+static void print_unit_information_into_gram();
+static void cancel_selecting_unit();
 
 void initialize_state_unit_summary_menu(){
 
@@ -132,7 +132,7 @@ void print_unit_information_into_gram(){
 }
 #pragma code-name (pop)
 
-void draw_unit_information(){
+static void draw_unit_information(){
     // TODO: make it so that if the cursor/unit is blocked by the UI area,
     // render the screen on the right side instead.
     queue_draw_sprite(UI_OFFSET_X, UI_OFFSET_Y, 40, 37, 0, 0, uiSpriteSlot);
@@ -142,7 +142,7 @@ void draw_unit_information(){
     queue_draw_sprite(UI_OFFSET_X + 28, UI_OFFSET_Y + 26, HEALTH_PIXEL_WIDTH, 8, HEALTH_PIXEL_WIDTH, 16, TEXT_BANK);
 }
 
-void cancel_selecting_unit(){
+static void cancel_selecting_unit(){
     redraw_unit_in_sram(currentSelectedUnit);
     change_game_state(CURSOR_MOVEMENT);
 }
