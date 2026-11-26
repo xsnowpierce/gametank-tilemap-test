@@ -16,9 +16,6 @@ void increment_tile_movement();
 #define MOVEMENT_FRAMES_UNTIL_MOVE_TICK 2
 static unsigned char current_movement_frames_until_tick;
 
-static vector_u8b *unit_movement_path_to_selected_tile;
-
-static unsigned char tiles_to_reach_destination;
 static unsigned char current_tile_progression;
 
 static vector_u8b target_tile_position;
@@ -33,7 +30,7 @@ static vector_u8b animation_tile_position;
 static void set_next_tile_target(){
     vector_s8b difference_in_position;
 
-    target_tile_position = unit_movement_path_to_selected_tile[current_tile_progression + 1];
+    target_tile_position = target_movement_path[current_tile_progression + 1];
 
     difference_in_position.x = (signed char) target_tile_position.x - (signed char) animation_tile_position.x;
     difference_in_position.y = (signed char) target_tile_position.y - (signed char) animation_tile_position.y;
@@ -75,15 +72,12 @@ void initialize_state_unit_moving_to_tile(){
     current_sprite_animation_frame = 0;
     current_movement_frames_until_tick = MOVEMENT_FRAMES_UNTIL_MOVE_TICK;
 
-    tiles_to_reach_destination = get_unit_path_to_tile(
-        current_map_id,
-        currentSelectedUnit->tile_position,
-        clicked_position,
-        currentSelectedUnit->unitStats.movementRange,
-        unit_movement_path_to_selected_tile
-    );
+    push_rom_bank();
+    change_rom_bank(BANK_PROG1);
+    calculate_unit_path_to_tile(currentSelectedUnit, clicked_position);
+    pop_rom_bank();
 
-    if (tiles_to_reach_destination == 0) {
+    if (target_movement_path_length == 0) {
         progress_to_unit_order_menu();
         return;
     }
@@ -126,7 +120,7 @@ void increment_tile_movement(){
 
         ++current_tile_progression;
 
-        if (current_tile_progression >= (tiles_to_reach_destination - 1)) {
+        if (current_tile_progression >= (target_movement_path_length - 1)) {
             // we have reached the end of the animation, progress to the
             // next part of the program.
             

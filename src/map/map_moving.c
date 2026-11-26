@@ -15,13 +15,16 @@ unsigned char node_local_y[NODE_COUNT];
 vector_u8b current_reachable_tiles[NODE_COUNT];
 unsigned char current_reachable_tiles_count;
 
+vector_u8b target_movement_path[NODE_COUNT];
+unsigned char target_movement_path_length;
+
 #pragma code-name (push, "PROG1")
-void calculate_reachable_tiles(unsigned char map_id, vector_u8b unit_start_position, unsigned char movement_range)
-{
+void calculate_reachable_tiles(unsigned char map_id, Unit *target_unit, Unit *unit_array){
     unsigned int i;
     unsigned int queue_front, queue_back, start_node;
     unsigned char local_x, local_y;
     int map_x, map_y;
+    unsigned char movement_range = target_unit->unitStats.movementRange;
 
     if (movement_range > UNIT_MOVE_LIMIT) {
         movement_range = UNIT_MOVE_LIMIT;
@@ -39,8 +42,8 @@ void calculate_reachable_tiles(unsigned char map_id, vector_u8b unit_start_posit
         node_distance[i] = UNVISITED_TILE_ID;
         node_parent[i] = NO_PARENT;
 
-        map_x = (int)unit_start_position.x + local_x - UNIT_MOVE_LIMIT;
-        map_y = (int)unit_start_position.y + local_y - UNIT_MOVE_LIMIT;
+        map_x = (int)target_unit->tile_position.x + local_x - UNIT_MOVE_LIMIT;
+        map_y = (int)target_unit->tile_position.y + local_y - UNIT_MOVE_LIMIT;
 
         if (map_x >= 0 && map_x < MAP_WIDTH &&
             map_y >= 0 && map_y < MAP_HEIGHT) {
@@ -73,7 +76,7 @@ void calculate_reachable_tiles(unsigned char map_id, vector_u8b unit_start_posit
         unsigned char direction;
 
         node = node_queue[queue_front++];
-        next_distance = (unsigned int)node_distance[node] + 1;
+        next_distance = (unsigned int) node_distance[node] + 1;
 
         if (next_distance > movement_range) {
             continue;
@@ -84,18 +87,30 @@ void calculate_reachable_tiles(unsigned char map_id, vector_u8b unit_start_posit
 
         for (direction = 0; direction < 4; ++direction) {
             unsigned int next_node;
+            unsigned char unit_on_tile_team_id;
 
             if (direction == 0) {
-                if (x == 0) continue;
+                if (x == 0){
+                    continue;
+                }
                 next_node = node - 1;
-            } else if (direction == 1) {
-                if (x + 1 >= MOVE_WINDOW_WIDTH) continue;
+            } 
+            else if (direction == 1) {
+                if (x + 1 >= MOVE_WINDOW_WIDTH){
+                    continue;
+                }
                 next_node = node + 1;
-            } else if (direction == 2) {
-                if (y == 0) continue;
+            } 
+            else if (direction == 2) {
+                if (y == 0){
+                    continue;
+                }
                 next_node = node - MOVE_WINDOW_WIDTH;
-            } else {
-                if (y + 1 >= MOVE_WINDOW_HEIGHT) continue;
+            } 
+            else {
+                if (y + 1 >= MOVE_WINDOW_HEIGHT){
+                    continue;
+                }
                 next_node = node + MOVE_WINDOW_WIDTH;
             }
 
@@ -104,8 +119,16 @@ void calculate_reachable_tiles(unsigned char map_id, vector_u8b unit_start_posit
                 continue;
             }
 
-            if (!get_tile_is_passable(
-                    get_tile_from_point(map_id, node_pos[next_node]))) {
+            unit_on_tile_team_id = is_unit_on_tile(node_pos[next_node], unit_array);
+            if (unit_on_tile_team_id != 0){
+                // unit is on this tile
+                if(unit_on_tile_team_id != target_unit->unit_team_id + 1) { // add 1 because its 0-based
+                    // an enemy is occupying this tile, so don't add it to the queue
+                    continue;
+                }
+            }
+
+            if (!get_tile_is_passable(get_tile_from_point(map_id, node_pos[next_node]))) {
                 continue;
             }
 
@@ -113,8 +136,7 @@ void calculate_reachable_tiles(unsigned char map_id, vector_u8b unit_start_posit
             node_parent[next_node] = node;
             node_queue[queue_back++] = next_node;
 
-            current_reachable_tiles[current_reachable_tiles_count++] =
-                node_pos[next_node];
+            current_reachable_tiles[current_reachable_tiles_count++] = node_pos[next_node];
         }
     }
 }
@@ -138,15 +160,17 @@ static unsigned int get_node_at_position(vector_u8b position) {
 #pragma code-name (pop)
 
 #pragma code-name (push, "PROG1")
-static unsigned char get_path(vector_u8b destination, vector_u8b *out_path, unsigned char out_capacity) {
+void calculate_unit_path_to_tile(Unit *unit, vector_u8b destination){
     unsigned int node;
     unsigned int length = 0;
     unsigned int i;
 
+    target_movement_path_length = 0;
+
     node = get_node_at_position(destination);
 
     if (node == NO_PARENT || node_distance[node] == UNVISITED_TILE_ID) {
-        return 0;
+        return;
     }
 
     while (node != NO_PARENT) {
@@ -154,18 +178,18 @@ static unsigned char get_path(vector_u8b destination, vector_u8b *out_path, unsi
         node = node_parent[node];
     }
 
-    if (length > out_capacity) {
-        return 0;
+    if (length > NODE_COUNT || length > (unsigned int)unit->unitStats.movementRange + 1) {
+        return;
     }
 
     node = get_node_at_position(destination);
 
     for (i = length; i > 0; --i) {
-        out_path[i - 1] = node_pos[node];
+        target_movement_path[i - 1] = node_pos[node];
         node = node_parent[node];
     }
 
-    return (unsigned char) length;
+    target_movement_path_length = (unsigned char) length;
 }
 #pragma code-name (pop)
 
@@ -190,18 +214,4 @@ unsigned char is_unit_on_tile(vector_u8b tile_position, Unit *unit_array){
 
     // no units found
     return 0;
-}
-
-unsigned char get_unit_path_to_tile(unsigned char map_id, vector_u8b unit_position, vector_u8b destination,
-    unsigned char unit_movement_range, vector_u8b *out_path) {
-    
-    unsigned char path_length;
-
-    push_rom_bank();
-    change_rom_bank(BANK_PROG1);
-
-    path_length = get_path(destination, out_path, unit_movement_range + 1);
-
-    pop_rom_bank();
-    return path_length;
 }

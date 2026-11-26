@@ -24,7 +24,7 @@ void initialize_state_choosing_movement_path(){
     push_rom_bank();
     change_rom_bank(BANK_PROG1);
 
-    calculate_reachable_tiles(current_map_id, currentSelectedUnit->tile_position, currentSelectedUnit->unitStats.movementRange);
+    calculate_reachable_tiles(current_map_id, currentSelectedUnit, unit_array);
     //unit_reachable_tiles_count = get_unit_reachable_tiles(current_map_id, currentSelectedUnit->tile_position, currentSelectedUnit->unitStats.movementRange, &unit_reachable_tiles);
     
     pop_rom_bank();
@@ -42,7 +42,7 @@ void update_state_choosing_movement_path(){
 
     update_map_sprite_animation();
     update_camera();
-    cursor_update_locked_movement(&current_reachable_tiles, 
+    cursor_update_locked_movement(current_reachable_tiles, 
         current_reachable_tiles_count, 
         currentSelectedUnit->tile_position
     );

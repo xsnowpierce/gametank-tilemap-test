@@ -21,11 +21,8 @@
 
 #define UNIT_MOVE_LIMIT 8
 
-void calculate_reachable_tiles(unsigned char map_id, vector_u8b unit_start_position, 
-    unsigned char movement_range);
-
-unsigned char get_unit_path_to_tile(unsigned char map_id, vector_u8b unit_position, vector_u8b destination,
-    unsigned char unit_movement_range, vector_u8b *out_path);
+void calculate_reachable_tiles(unsigned char map_id, Unit *target_unit, Unit *unit_array);
+void calculate_unit_path_to_tile(Unit *unit, vector_u8b destination);
 
 // checks whether a unit is on the given tile.
 // Returns with 0 if there are none. Returns with 1 or 2 if there is, and the given team ID
@@ -34,5 +31,8 @@ unsigned char is_unit_on_tile(vector_u8b tile_position, Unit *unit_array);
 
 extern vector_u8b current_reachable_tiles[NODE_COUNT];
 extern unsigned char current_reachable_tiles_count;
+
+extern vector_u8b target_movement_path[NODE_COUNT];
+extern unsigned char target_movement_path_length;
 
 #endif
