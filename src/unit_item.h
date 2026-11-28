@@ -42,9 +42,12 @@ typedef enum {
     ITEM_ID_MAX_COUNT_END // Leave this last
 } ITEM_ID;
 
+// ITEM NAME MAX CHARACTER NAME LIMIT IS 8
+#define ITEM_NAME_MAX_CHARACTER_LIMIT 8
+
 static const Item ITEM_DATABASE[ITEM_ID_MAX_COUNT_END] = {
     { ITEM_EMPTY,  "------",       0,  0,  0 },
-    { ITEM_WEAPON, "IRON SWORD", 12, 50,  0 },
+    { ITEM_WEAPON, "SWORD", 12, 50,  0 },
     { ITEM_POTION, "POTION",      0,  0, 25 }
 };
 

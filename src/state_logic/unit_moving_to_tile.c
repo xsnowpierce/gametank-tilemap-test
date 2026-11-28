@@ -15,6 +15,7 @@ void progress_to_unit_order_menu();
 void increment_tile_movement();
 void set_next_tile_target();
 void private_init();
+void private_update();
 vector_u8b calculate_drawing_position();
 
 #define TILE_SIZE 8
@@ -41,33 +42,13 @@ void initialize_state_unit_moving_to_tile(){
     change_rom_bank(BANK_PROG1);
     private_init();
     pop_rom_bank();
-    current_footstep_tick_value = 0;
 }
 
 void update_state_unit_moving_to_tile(){
-    --current_sprite_animation_frame_tick;
-
-    if (current_sprite_animation_frame_tick <= 0) {
-        current_sprite_animation_frame ^= 1;
-        current_sprite_animation_frame_tick = WALKING_SPRITE_ANIMATION_FRAME_LENGTH;
-    }
-
-
-    --current_movement_frames_until_tick;
-    if(current_movement_frames_until_tick <= 0){
-        push_rom_bank();
-        change_rom_bank(BANK_PROG1);
-        increment_tile_movement();
-        pop_rom_bank();
-        
-        current_movement_frames_until_tick = MOVEMENT_FRAMES_UNTIL_MOVE_TICK;
-    }
-
-    --current_footstep_tick_value;
-    if(current_footstep_tick_value <= 0){
-        play_sound_effect(ASSET__sfx__footstep_sound_sfx_ID, 0);
-        current_footstep_tick_value = PLAY_FOOTSTEP_SFX_TICK_DELAY;
-    }
+    push_rom_bank();
+    change_rom_bank(BANK_PROG1);
+    private_update();
+    pop_rom_bank();
 }
 
 void draw_state_unit_moving_to_tile(){
@@ -114,6 +95,35 @@ void private_init(){
         return;
     }
     set_next_tile_target();
+
+    current_footstep_tick_value = 0;
+}
+
+void private_update(){
+    --current_sprite_animation_frame_tick;
+
+    if (current_sprite_animation_frame_tick <= 0) {
+        current_sprite_animation_frame ^= 1;
+        current_sprite_animation_frame_tick = WALKING_SPRITE_ANIMATION_FRAME_LENGTH;
+    }
+
+
+    --current_movement_frames_until_tick;
+    if(current_movement_frames_until_tick <= 0){
+        increment_tile_movement();
+        
+        current_movement_frames_until_tick = MOVEMENT_FRAMES_UNTIL_MOVE_TICK;
+    }
+
+    --current_footstep_tick_value;
+    if(current_footstep_tick_value <= 0){
+        //push_rom_bank();
+        //change_rom_bank(BANK_);
+        play_sound_effect(ASSET__sfx__footstep_sound_sfx_ID, 0);
+        //pop_rom_bank();
+        
+        current_footstep_tick_value = PLAY_FOOTSTEP_SFX_TICK_DELAY;
+    }
 }
 
 void increment_tile_movement(){

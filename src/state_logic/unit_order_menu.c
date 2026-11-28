@@ -10,6 +10,14 @@
 #include "../gt/feature/bittext/bittext.h"
 #include "../gt/gfx/draw_direct.h"
 #include "../unit_item.h"
+#include "../gt/gfx/draw_queue.h"
+
+#include "../gt/banking.h"
+#include "../gen/bank_nums.h"
+
+
+#include "../gt/audio/music.h"
+#include "../gen/assets/sfx.h"
 
 #define UI_OFFSET_X 1
 #define UI_OFFSET_Y 8
@@ -21,6 +29,17 @@
 
 void cancel_order_menu();
 void preload_menu_into_vram();
+void draw_unit();
+void draw_order_ui();
+void player_moved_menu_cursor();
+void player_selected_menu_item();
+static void private_update();
+void update_menu_cursor_sprite();
+
+signed char menu_cursor_selecting_index = 0;
+
+#define SPRITE_ANIMATION_FRAMES 15
+unsigned char current_sprite_index = 0;
 
 void initialize_state_unit_order_menu(){
     // need to detect whether enemies are within our attacking range
@@ -34,6 +53,71 @@ void initialize_state_unit_order_menu(){
 
     // order menu should have a display of the current weapon selected.
     preload_menu_into_vram();
+    draw_order_ui();
+    menu_cursor_selecting_index = 0;
+    current_sprite_index = 0;
+}
+
+void update_state_unit_order_menu(){
+    push_rom_bank();
+    change_rom_bank(BANK_PROG1);
+    private_update();
+    pop_rom_bank();
+}
+
+void queue_draw_state_unit_order_menu(){
+    push_rom_bank();
+    change_rom_bank(BANK_PROG1);
+    draw_order_ui();
+    pop_rom_bank();
+}
+
+void draw_state_unit_order_menu(){
+    push_rom_bank();
+    change_rom_bank(BANK_PROG1);
+    draw_unit();
+    pop_rom_bank();
+}
+
+#pragma code-name (push, "PROG1")
+static void private_update(){
+    update_unit_flickering();
+    //update_map_sprite_animation();
+
+    if(player1_new_buttons & INPUT_MASK_B){
+        // cancel
+        cancel_order_menu();
+        return;
+    }
+
+    if(player1_new_buttons & INPUT_MASK_UP || player1_new_buttons & INPUT_MASK_DOWN){
+        push_rom_bank();
+        change_rom_bank(BANK_PROG1);
+        player_moved_menu_cursor();
+        pop_rom_bank();
+        return;
+    }
+
+    if(player1_new_buttons & INPUT_MASK_A){
+        push_rom_bank();
+        change_rom_bank(BANK_PROG1);
+        player_selected_menu_item();
+        pop_rom_bank();
+        return;
+    }
+    update_menu_cursor_sprite();
+}
+
+
+
+void update_menu_cursor_sprite(){
+    static unsigned char current_frames = SPRITE_ANIMATION_FRAMES;
+
+    current_frames--;
+    if(current_frames <= 0){
+        current_sprite_index ^= 1;
+        current_frames = SPRITE_ANIMATION_FRAMES;
+    }
 }
 
 // can probably preload the text here, 
@@ -51,22 +135,7 @@ void preload_menu_into_vram(){
     bittext_write_str(units_item->itemName);
 }
 
-void update_state_unit_order_menu(){
-    update_unit_flickering();
-    update_map_sprite_animation();
-
-    if(player1_new_buttons & INPUT_MASK_B){
-        // cancel
-        cancel_order_menu();
-        return;
-    }
-}
-
-void queue_draw_state_unit_order_menu(){
-
-}
-
-void draw_state_unit_order_menu(){
+void draw_unit(){
     vector_u8b draw_position;
 
     draw_position.x = temporary_unit_tile_position.x << 3;
@@ -78,6 +147,55 @@ void draw_state_unit_order_menu(){
         await_drawing();
     }
 }
+
+#define FIRST_POSITION_Y UI_OFFSET_Y + 3
+#define SECOND_POSITION_Y UI_OFFSET_Y + 11
+#define THIRD_POSITION_Y UI_OFFSET_Y + 19
+
+#define MENU_CURSOR_X_POSITION 30
+#define MENU_CURSOR_Y_STARTING_POSITION FIRST_POSITION_Y - 1
+
+void draw_order_ui(){
+    queue_draw_sprite(UI_OFFSET_X, UI_OFFSET_Y, 40, 28, 0, 37, uiSpriteSlot); // background
+    queue_draw_sprite(UI_OFFSET_X + 3, FIRST_POSITION_Y, 23, 7, 0, 112, TEXT_BANK); // attack
+    queue_draw_sprite(UI_OFFSET_X + 3, SECOND_POSITION_Y, 16, 7, 28, 112, TEXT_BANK); // item
+    queue_draw_sprite(UI_OFFSET_X + 3, THIRD_POSITION_Y, 16, 7, 48, 112, TEXT_BANK); // wait
+
+    queue_draw_sprite(UI_OFFSET_X, UI_OFFSET_Y + 30, 40, 17, 0, 65, uiSpriteSlot) // equipped item background
+    queue_draw_sprite(UI_OFFSET_X + 3, UI_OFFSET_Y + 32, 34, 7, 0, 120, TEXT_BANK); // equipped item name
+
+    // player menu cursor
+    if(current_sprite_index == 0){
+        queue_draw_sprite(MENU_CURSOR_X_POSITION, MENU_CURSOR_Y_STARTING_POSITION + (menu_cursor_selecting_index << 3), 8, 8, 40, 0, uiSpriteSlot);
+    }else{
+        queue_draw_sprite(MENU_CURSOR_X_POSITION, MENU_CURSOR_Y_STARTING_POSITION + (menu_cursor_selecting_index << 3), 8, 8, 48, 0, uiSpriteSlot);
+    }
+}
+
+void player_moved_menu_cursor(){
+
+    play_sound_effect(ASSET__sfx__cursor_move_sound_sfx_ID, 0);
+
+    if(player1_new_buttons & INPUT_MASK_UP){
+        --menu_cursor_selecting_index;
+        if(menu_cursor_selecting_index < 0){
+            menu_cursor_selecting_index = 2;
+        }
+    }
+
+    else if(player1_new_buttons & INPUT_MASK_DOWN){
+        ++menu_cursor_selecting_index;
+        if(menu_cursor_selecting_index > 2){
+            menu_cursor_selecting_index = 0;
+        }
+    }
+}
+
+void player_selected_menu_item(){
+
+}
+
+#pragma code-name (pop)
 
 void unit_finish_turn(){
     currentSelectedUnit->has_finished_turn = 1;
