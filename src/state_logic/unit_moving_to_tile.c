@@ -8,6 +8,9 @@
 #include "../gt/banking.h"
 #include "../gen/bank_nums.h"
 
+#include "../gt/audio/music.h"
+#include "../gen/assets/sfx.h"
+
 void progress_to_unit_order_menu();
 void increment_tile_movement();
 void set_next_tile_target();
@@ -17,43 +20,53 @@ vector_u8b calculate_drawing_position();
 #define TILE_SIZE 8
 
 #define MOVEMENT_FRAMES_UNTIL_MOVE_TICK 2
-static unsigned char current_movement_frames_until_tick;
+unsigned char current_movement_frames_until_tick;
 
-static unsigned char current_tile_progression;
+unsigned char current_tile_progression;
 
-static vector_u8b target_tile_position;
+vector_u8b target_tile_position;
 
-static unsigned char current_sprite_animation_frame_tick = WALKING_SPRITE_ANIMATION_FRAME_LENGTH;
-static unsigned char current_sprite_animation_frame = 0;
+unsigned char current_sprite_animation_frame_tick = WALKING_SPRITE_ANIMATION_FRAME_LENGTH;
+unsigned char current_sprite_animation_frame = 0;
 
-static vector_s8b move_step;
-static vector_s8b drawing_offset;
-static vector_u8b animation_tile_position;
+vector_s8b move_step;
+vector_s8b drawing_offset;
+vector_u8b animation_tile_position;
+
+#define PLAY_FOOTSTEP_SFX_TICK_DELAY 15
+signed char current_footstep_tick_value;
 
 void initialize_state_unit_moving_to_tile(){
     push_rom_bank();
     change_rom_bank(BANK_PROG1);
     private_init();
     pop_rom_bank();
+    current_footstep_tick_value = 0;
 }
 
 void update_state_unit_moving_to_tile(){
     --current_sprite_animation_frame_tick;
 
-    if (current_sprite_animation_frame_tick == 0) {
+    if (current_sprite_animation_frame_tick <= 0) {
         current_sprite_animation_frame ^= 1;
         current_sprite_animation_frame_tick = WALKING_SPRITE_ANIMATION_FRAME_LENGTH;
     }
 
 
     --current_movement_frames_until_tick;
-    if(current_movement_frames_until_tick == 0){
+    if(current_movement_frames_until_tick <= 0){
         push_rom_bank();
         change_rom_bank(BANK_PROG1);
         increment_tile_movement();
         pop_rom_bank();
         
         current_movement_frames_until_tick = MOVEMENT_FRAMES_UNTIL_MOVE_TICK;
+    }
+
+    --current_footstep_tick_value;
+    if(current_footstep_tick_value <= 0){
+        play_sound_effect(ASSET__sfx__footstep_sound_sfx_ID, 0);
+        current_footstep_tick_value = PLAY_FOOTSTEP_SFX_TICK_DELAY;
     }
 }
 

@@ -43,7 +43,7 @@ typedef enum {
 } ITEM_ID;
 
 static const Item ITEM_DATABASE[ITEM_ID_MAX_COUNT_END] = {
-    { ITEM_EMPTY,  "EMPTY",       0,  0,  0 },
+    { ITEM_EMPTY,  "------",       0,  0,  0 },
     { ITEM_WEAPON, "IRON SWORD", 12, 50,  0 },
     { ITEM_POTION, "POTION",      0,  0, 25 }
 };

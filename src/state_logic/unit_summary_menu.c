@@ -95,9 +95,6 @@ void draw_state_unit_summary_menu(){
 void print_unit_information_into_gram(){
     char i;
 
-    //direct_prepare_sprite_mode(TEXT_BANK);
-    
-
     // now draw onto this somehow
     direct_prepare_sprite_ram_array_mode(TEXT_BANK);
     

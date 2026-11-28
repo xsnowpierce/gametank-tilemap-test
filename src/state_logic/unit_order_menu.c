@@ -9,6 +9,7 @@
 #include "../map/map_tile_helper.h"
 #include "../gt/feature/bittext/bittext.h"
 #include "../gt/gfx/draw_direct.h"
+#include "../unit_item.h"
 
 #define UI_OFFSET_X 1
 #define UI_OFFSET_Y 8
@@ -35,21 +36,19 @@ void initialize_state_unit_order_menu(){
     preload_menu_into_vram();
 }
 
+// can probably preload the text here, 
+// improve later. but im not sure if it will be a noticeable optimization.
 void preload_menu_into_vram(){
+    const Item *units_item = &ITEM_DATABASE[currentSelectedUnit->inventory.slots[currentSelectedUnit->equipped_inventory_slot]];
     direct_prepare_sprite_ram_array_mode(TEXT_BANK);
-    // bittext_set_x(0);
-    // bittext_set_y(0);
-    // bittext_write_str("      ");
     bittext_set_x(0);
-    bittext_set_y(0);
-    bittext_write_str("ATTACK");
+    bittext_set_y(112);
+    bittext_write_str("ATTACK ITEM WAIT");
     bittext_set_x(0);
-    bittext_set_y(8);
-    bittext_write_str("ITEM");
-    bittext_set_y(16);
-    bittext_write_str("WAIT");
-    bittext_set_y(24);
-    bittext_write_str("WEAPON_NAME");
+    bittext_set_y(120);
+    bittext_write_str("            ");
+    bittext_set_x(0);
+    bittext_write_str(units_item->itemName);
 }
 
 void update_state_unit_order_menu(){
