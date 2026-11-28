@@ -14,14 +14,7 @@
 #include "../gen/bank_nums.h"
 #include "unit_selected_flicker.h"
 
-
-#define UI_OFFSET_X 1
-#define UI_OFFSET_Y 8
-
-#define TEXT_BANK QUADRANT_3 | 4
-
-// pixel width of font, really
-#define PIXELS_PER_TEXT_CHARACTER 4
+#include "../ui_defs.h"
 
 // user specified definitions
 #define UNIT_NAME_MAX_CHARACTERS 6

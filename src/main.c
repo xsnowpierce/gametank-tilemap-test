@@ -1,5 +1,4 @@
 #include "gen/assets/player.h"
-#include "gt/audio/backends/tracker_fm/music.h"
 #include "gt/gfx/draw_queue.h"
 #include "gt/gfx/gfx_sys.h"
 #include "gt/gfx/sprites.h"
@@ -11,8 +10,6 @@
 #include "state_logic/game_state.h"
 
 SpriteSlot playerSpriteSlot;
-
-#define SPRITE_BANK_POSITION QUADRANT_0 | 0
 
 void start_game(){
     init_audio_coprocessor();

@@ -19,13 +19,7 @@
 #include "../gt/audio/music.h"
 #include "../gen/assets/sfx.h"
 
-#define UI_OFFSET_X 1
-#define UI_OFFSET_Y 8
-
-#define TEXT_BANK QUADRANT_3 | 4
-
-// pixel width of font, really
-#define PIXELS_PER_TEXT_CHARACTER 4
+#include "../ui_defs.h"
 
 void cancel_order_menu();
 void preload_menu_into_vram();
