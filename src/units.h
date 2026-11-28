@@ -4,6 +4,7 @@
 #include "gt/gfx/sprites.h"
 #include "unit_stats.h"
 #include "vector.h"
+#include "unit_item.h"
 
 #define MAX_UNIT_COUNT 30
 
@@ -14,8 +15,9 @@ enum UNIT_JOB {
 typedef struct {
     // UNIT INFORMATION
     enum UNIT_JOB unitJob;
-    char* unitName;
+    const char* unitName;
     Statistics unitStats;
+    Inventory inventory;
     unsigned char unit_team_id;
 
     // UNIT PROGRAMMING
