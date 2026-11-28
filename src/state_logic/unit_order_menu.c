@@ -190,15 +190,11 @@ void player_moved_menu_cursor(){
         }
     }
 }
-
-void player_selected_menu_item(){
-
-}
-
 #pragma code-name (pop)
 
 void unit_finish_turn(){
     currentSelectedUnit->has_finished_turn = 1;
+    currentSelectedUnit->tile_position = temporary_unit_tile_position;
     redraw_unit_in_sram(currentSelectedUnit);
     change_game_state(CURSOR_MOVEMENT);
 }
@@ -208,3 +204,20 @@ void cancel_order_menu(){
     redraw_unit_in_sram(currentSelectedUnit);
     change_game_state(CURSOR_MOVEMENT);
 }
+
+void player_selected_menu_item(){
+    switch(menu_cursor_selecting_index){
+        case 0:
+            break;
+        case 1:
+            break;
+        case 2:
+            unit_finish_turn();
+            break;
+        default:
+            break;
+    }
+}
+
+
+
