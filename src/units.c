@@ -178,17 +178,17 @@ vector_u8b get_unit_sprite_point(enum UNIT_JOB type, unsigned char team_id){
     switch(type){
         case SWORDSMAN:
             return_vector.x = 0;
-            return_vector.y = 8;
+            return_vector.y = 0;
             break;
 
         case MAGE:
             return_vector.x = 0;
-            return_vector.y = 24;
+            return_vector.y = 8;
             break;
         
         case VAMPIRE:
             return_vector.x = 0;
-            return_vector.y = 40;
+            return_vector.y = 16;
             break;
 
         default:
@@ -198,7 +198,7 @@ vector_u8b get_unit_sprite_point(enum UNIT_JOB type, unsigned char team_id){
     }
 
     if(team_id == 1){
-        return_vector.y += 8;
+        return_vector.x += 64;
     }
 
     return return_vector;

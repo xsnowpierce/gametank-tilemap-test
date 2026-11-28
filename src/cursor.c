@@ -5,6 +5,7 @@
 #include "gt/gfx/gfx_sys.h"
 #include "gt/input.h"
 #include "gt/gfx/draw_queue.h"
+#include "state_logic/game_state.h"
 #include "vector.h"
 #include "gen/bank_nums.h"
 
@@ -28,8 +29,6 @@ static void query_locked_movement(vector_u8b *moveable_tiles, unsigned char move
 #define FIRST_MOVEMENT_TICK_DELAY 15
 
 unsigned char cursor_tile_position_x = CURSOR_MINIMUM_TILE_X, cursor_tile_position_y = CURSOR_MINIMUM_TILE_Y;
-
-#define cursorSpriteBank QUADRANT_0 | 0
 
 unsigned char current_input_frame_delay = 0;
 unsigned char current_sprite_frame_tick = 0;
@@ -261,9 +260,9 @@ static void on_cursor_move(){
 }
 
 void draw_cursor(){
-    queue_draw_sprite((cursor_tile_position_x << 3) - camera_x, (cursor_tile_position_y << 3) - camera_y, 8, 8, 8 + (spriteUse << 3), 0, cursorSpriteBank);
+    queue_draw_sprite((cursor_tile_position_x << 3) - camera_x, (cursor_tile_position_y << 3) - camera_y, 8, 8, 56 + (spriteUse << 3), 0, uiSpriteSlot);
 }
 
 void draw_cursor_selecting(){
-    queue_draw_sprite((cursor_tile_position_x << 3) - camera_x, (cursor_tile_position_y << 3) - camera_y, 8, 8, 8 + (spriteUse << 3) + 16, 0, cursorSpriteBank);
+    queue_draw_sprite((cursor_tile_position_x << 3) - camera_x, (cursor_tile_position_y << 3) - camera_y, 8, 8, 56 + (spriteUse << 3) + 16, 0, uiSpriteSlot);
 }
