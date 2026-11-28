@@ -10,6 +10,9 @@
 
 void progress_to_unit_order_menu();
 void increment_tile_movement();
+void set_next_tile_target();
+void private_init();
+vector_u8b calculate_drawing_position();
 
 #define TILE_SIZE 8
 
@@ -27,37 +30,56 @@ static vector_s8b move_step;
 static vector_s8b drawing_offset;
 static vector_u8b animation_tile_position;
 
-static void set_next_tile_target(){
-    vector_s8b difference_in_position;
+void initialize_state_unit_moving_to_tile(){
+    push_rom_bank();
+    change_rom_bank(BANK_PROG1);
+    private_init();
+    pop_rom_bank();
+}
 
-    target_tile_position = target_movement_path[current_tile_progression + 1];
+void update_state_unit_moving_to_tile(){
+    --current_sprite_animation_frame_tick;
 
-    difference_in_position.x = (signed char) target_tile_position.x - (signed char) animation_tile_position.x;
-    difference_in_position.y = (signed char) target_tile_position.y - (signed char) animation_tile_position.y;
-
-    move_step.x = 0;
-    move_step.y = 0;
-
-    drawing_offset.x = 0;
-    drawing_offset.y = 0;
-
-    if (difference_in_position.x < 0) {
-        move_step.x = -1;
-    }
-    else if (difference_in_position.x > 0) {
-        move_step.x =  1;
+    if (current_sprite_animation_frame_tick == 0) {
+        current_sprite_animation_frame ^= 1;
+        current_sprite_animation_frame_tick = WALKING_SPRITE_ANIMATION_FRAME_LENGTH;
     }
 
-    if (difference_in_position.y < 0) {
-        move_step.y = -1;
-    }
 
-    else if (difference_in_position.y > 0) {
-        move_step.y =  1;
+    --current_movement_frames_until_tick;
+    if(current_movement_frames_until_tick == 0){
+        push_rom_bank();
+        change_rom_bank(BANK_PROG1);
+        increment_tile_movement();
+        pop_rom_bank();
+        
+        current_movement_frames_until_tick = MOVEMENT_FRAMES_UNTIL_MOVE_TICK;
     }
 }
 
-void initialize_state_unit_moving_to_tile(){
+void draw_state_unit_moving_to_tile(){
+    vector_u8b drawing_position;
+
+    push_rom_bank();
+    change_rom_bank(BANK_PROG1);
+    drawing_position = calculate_drawing_position();
+    pop_rom_bank();
+    
+    direct_draw_unit_at_position(
+        currentSelectedUnit,
+        current_sprite_animation_frame + 3, 
+        drawing_position
+    );
+    
+    await_drawing();
+}
+
+void queue_draw_state_unit_moving_to_tile(){
+
+}
+
+#pragma code-name (push, "PROG1")
+void private_init(){
     vector_u8b clicked_position;
 
     clicked_position.x = cursor_tile_position_x;
@@ -72,32 +94,13 @@ void initialize_state_unit_moving_to_tile(){
     current_sprite_animation_frame = 0;
     current_movement_frames_until_tick = MOVEMENT_FRAMES_UNTIL_MOVE_TICK;
 
-    push_rom_bank();
-    change_rom_bank(BANK_PROG1);
     calculate_unit_path_to_tile(currentSelectedUnit, clicked_position);
-    pop_rom_bank();
 
     if (target_movement_path_length == 0) {
         progress_to_unit_order_menu();
         return;
     }
     set_next_tile_target();
-}
-
-void update_state_unit_moving_to_tile(){
-    --current_sprite_animation_frame_tick;
-
-    if (current_sprite_animation_frame_tick == 0) {
-        current_sprite_animation_frame ^= 1;
-        current_sprite_animation_frame_tick = WALKING_SPRITE_ANIMATION_FRAME_LENGTH;
-    }
-
-
-    --current_movement_frames_until_tick;
-    if(current_movement_frames_until_tick == 0){
-        increment_tile_movement();
-        current_movement_frames_until_tick = MOVEMENT_FRAMES_UNTIL_MOVE_TICK;
-    }
 }
 
 void increment_tile_movement(){
@@ -143,24 +146,38 @@ vector_u8b calculate_drawing_position(){
     return pixel_position;
 }
 
-void draw_state_unit_moving_to_tile(){
-    vector_u8b drawing_position;
-    drawing_position = calculate_drawing_position();
-
-    direct_draw_unit_at_position(
-        currentSelectedUnit,
-        current_sprite_animation_frame + 3, 
-        drawing_position
-    );
-    
-    await_drawing();
-}
-
-void queue_draw_state_unit_moving_to_tile(){
-
-}
-
 void progress_to_unit_order_menu(){
     temporary_unit_tile_position = animation_tile_position;
     change_game_state(UNIT_ORDER_MENU);
 }
+
+void set_next_tile_target(){
+    vector_s8b difference_in_position;
+
+    target_tile_position = target_movement_path[current_tile_progression + 1];
+
+    difference_in_position.x = (signed char) target_tile_position.x - (signed char) animation_tile_position.x;
+    difference_in_position.y = (signed char) target_tile_position.y - (signed char) animation_tile_position.y;
+
+    move_step.x = 0;
+    move_step.y = 0;
+
+    drawing_offset.x = 0;
+    drawing_offset.y = 0;
+
+    if (difference_in_position.x < 0) {
+        move_step.x = -1;
+    }
+    else if (difference_in_position.x > 0) {
+        move_step.x =  1;
+    }
+
+    if (difference_in_position.y < 0) {
+        move_step.y = -1;
+    }
+
+    else if (difference_in_position.y > 0) {
+        move_step.y =  1;
+    }
+}
+#pragma code-name (pop)
